@@ -25,6 +25,15 @@ const FONT_OPTIONS = [
     { label: 'General Sans', value: "'General Sans', sans-serif", category: 'modern' },
 ];
 
+// Most display fonts in the picker do not include Devanagari glyphs. Keep the
+// selected font for scripts it supports, then use a purpose-built Marathi/Hindi
+// fallback for the missing glyphs. The generic family must stay last, otherwise
+// browsers choose it before reaching the Devanagari font.
+const fontStack = (fontFamily = "'Cabin Sketch', cursive") => {
+    const withoutGenericFallback = fontFamily.replace(/,\s*(cursive|sans-serif|serif|monospace)\s*$/i, '');
+    return `${withoutGenericFallback}, 'Noto Sans Devanagari', 'Nirmala UI', sans-serif`;
+};
+
 const COLOR_PALETTE = [
     { label: 'Off-White', value: '#FAFAFA' },
     { label: 'Paper', value: '#F5F5F5' },
@@ -324,7 +333,7 @@ const DraggableTextElement = React.memo(({ elem, isSelected, onSelect, onUpdate,
         left: `${elem.x}px`,
         top: `${elem.y}px`,
         width: `${elem.width || 400}px`,
-        fontFamily: elem.style.fontFamily,
+        fontFamily: fontStack(elem.style.fontFamily),
         fontSize: `${elem.style.fontSize}px`,
         fontWeight: elem.style.bold ? 900 : elem.style.fontWeight,
         fontStyle: elem.style.italic ? 'italic' : 'normal',
@@ -498,7 +507,7 @@ const SlideCanvas = React.forwardRef(({ slide, scale, selectedElementId, onSelec
             case 'bullet-list':
                 return (
                     <div className="slide-layout-bullets">
-                        <h1 className="slide-title" style={{ fontFamily: slide.fontFamily, fontWeight: slide.fontWeight, opacity: slide.titleOpacity ?? 1 }}>
+                        <h1 className="slide-title" style={{ fontFamily: fontStack(slide.fontFamily), fontWeight: slide.fontWeight, opacity: slide.titleOpacity ?? 1 }}>
                             {slide.title || 'Slide Title'}
                         </h1>
                         <p className="slide-content" style={{ opacity: slide.contentOpacity ?? 1 }}>{slide.content || 'Add your content here...'}</p>
@@ -512,7 +521,7 @@ const SlideCanvas = React.forwardRef(({ slide, scale, selectedElementId, onSelec
             case 'numbered-list':
                 return (
                     <div className="slide-layout-numbered">
-                        <h1 className="slide-title" style={{ fontFamily: slide.fontFamily, fontWeight: slide.fontWeight, opacity: slide.titleOpacity ?? 1 }}>
+                        <h1 className="slide-title" style={{ fontFamily: fontStack(slide.fontFamily), fontWeight: slide.fontWeight, opacity: slide.titleOpacity ?? 1 }}>
                             {slide.title || 'Slide Title'}
                         </h1>
                         <p className="slide-content" style={{ opacity: slide.contentOpacity ?? 1 }}>{slide.content || 'Add your content here...'}</p>
@@ -526,7 +535,7 @@ const SlideCanvas = React.forwardRef(({ slide, scale, selectedElementId, onSelec
             case 'big-text':
                 return (
                     <div className="slide-layout-bigtext">
-                        <h1 className="slide-title slide-title--large" style={{ fontFamily: slide.fontFamily, fontWeight: slide.fontWeight, opacity: slide.titleOpacity ?? 1 }}>
+                        <h1 className="slide-title slide-title--large" style={{ fontFamily: fontStack(slide.fontFamily), fontWeight: slide.fontWeight, opacity: slide.titleOpacity ?? 1 }}>
                             {slide.title || 'Big Statement'}
                         </h1>
                         <p className="slide-content" style={{ opacity: slide.contentOpacity ?? 1 }}>{slide.content || ''}</p>
@@ -536,7 +545,7 @@ const SlideCanvas = React.forwardRef(({ slide, scale, selectedElementId, onSelec
                 return (
                     <div className="slide-layout-split">
                         <div className="slide-split-left">
-                            <h1 className="slide-title" style={{ fontFamily: slide.fontFamily, fontWeight: slide.fontWeight, opacity: slide.titleOpacity ?? 1 }}>
+                            <h1 className="slide-title" style={{ fontFamily: fontStack(slide.fontFamily), fontWeight: slide.fontWeight, opacity: slide.titleOpacity ?? 1 }}>
                                 {slide.title || 'Slide Title'}
                             </h1>
                         </div>
@@ -549,7 +558,7 @@ const SlideCanvas = React.forwardRef(({ slide, scale, selectedElementId, onSelec
                 return (
                     <div className="slide-layout-quote">
                         <div className="slide-quote-mark">"</div>
-                        <h1 className="slide-title slide-title--quote" style={{ fontFamily: slide.fontFamily, fontWeight: slide.fontWeight, opacity: slide.titleOpacity ?? 1 }}>
+                        <h1 className="slide-title slide-title--quote" style={{ fontFamily: fontStack(slide.fontFamily), fontWeight: slide.fontWeight, opacity: slide.titleOpacity ?? 1 }}>
                             {slide.title || 'Quote goes here'}
                         </h1>
                         <p className="slide-content" style={{ opacity: slide.contentOpacity ?? 1 }}>{slide.content || ''}</p>
@@ -559,7 +568,7 @@ const SlideCanvas = React.forwardRef(({ slide, scale, selectedElementId, onSelec
                 return (
                     <div className="slide-layout-twocol">
                         <div className="slide-twocol-left">
-                            <h1 className="slide-title" style={{ fontFamily: slide.fontFamily, fontWeight: slide.fontWeight, opacity: slide.titleOpacity ?? 1 }}>
+                            <h1 className="slide-title" style={{ fontFamily: fontStack(slide.fontFamily), fontWeight: slide.fontWeight, opacity: slide.titleOpacity ?? 1 }}>
                                 {slide.title || 'Left Column'}
                             </h1>
                             <p className="slide-content" style={{ opacity: slide.contentOpacity ?? 1 }}>{slide.content || 'Content goes here...'}</p>
@@ -580,7 +589,7 @@ const SlideCanvas = React.forwardRef(({ slide, scale, selectedElementId, onSelec
             case 'stats':
                 return (
                     <div className="slide-layout-stats">
-                        <h1 className="slide-title" style={{ fontFamily: slide.fontFamily, fontWeight: slide.fontWeight, opacity: slide.titleOpacity ?? 1 }}>
+                        <h1 className="slide-title" style={{ fontFamily: fontStack(slide.fontFamily), fontWeight: slide.fontWeight, opacity: slide.titleOpacity ?? 1 }}>
                             {slide.title || 'Key Stats'}
                         </h1>
                         <div className="slide-stats-grid" style={{ opacity: slide.bulletsOpacity ?? 1 }}>
@@ -603,7 +612,7 @@ const SlideCanvas = React.forwardRef(({ slide, scale, selectedElementId, onSelec
             case 'checklist':
                 return (
                     <div className="slide-layout-checklist">
-                        <h1 className="slide-title" style={{ fontFamily: slide.fontFamily, fontWeight: slide.fontWeight, opacity: slide.titleOpacity ?? 1 }}>
+                        <h1 className="slide-title" style={{ fontFamily: fontStack(slide.fontFamily), fontWeight: slide.fontWeight, opacity: slide.titleOpacity ?? 1 }}>
                             {slide.title || 'Checklist'}
                         </h1>
                         <p className="slide-content" style={{ opacity: slide.contentOpacity ?? 1 }}>{slide.content || ''}</p>
@@ -623,7 +632,7 @@ const SlideCanvas = React.forwardRef(({ slide, scale, selectedElementId, onSelec
             case 'timeline':
                 return (
                     <div className="slide-layout-timeline">
-                        <h1 className="slide-title" style={{ fontFamily: slide.fontFamily, fontWeight: slide.fontWeight, opacity: slide.titleOpacity ?? 1 }}>
+                        <h1 className="slide-title" style={{ fontFamily: fontStack(slide.fontFamily), fontWeight: slide.fontWeight, opacity: slide.titleOpacity ?? 1 }}>
                             {slide.title || 'Timeline'}
                         </h1>
                         <div className="slide-timeline" style={{ opacity: slide.bulletsOpacity ?? 1 }}>
@@ -649,7 +658,7 @@ const SlideCanvas = React.forwardRef(({ slide, scale, selectedElementId, onSelec
                 return (
                     <div className="slide-layout-testimonial">
                         <div className="slide-testimonial-quote">"</div>
-                        <h1 className="slide-title slide-title--testimonial" style={{ fontFamily: slide.fontFamily, fontWeight: slide.fontWeight, opacity: slide.titleOpacity ?? 1 }}>
+                        <h1 className="slide-title slide-title--testimonial" style={{ fontFamily: fontStack(slide.fontFamily), fontWeight: slide.fontWeight, opacity: slide.titleOpacity ?? 1 }}>
                             {slide.title || ' testimonial goes here'}
                         </h1>
                         <div className="slide-testimonial-author" style={{ opacity: slide.contentOpacity ?? 1 }}>
@@ -670,7 +679,7 @@ const SlideCanvas = React.forwardRef(({ slide, scale, selectedElementId, onSelec
                             <div className="slide-imgoverlay-placeholder">Upload image in editor</div>
                         )}
                         <div className="slide-imgoverlay-content">
-                            <h1 className="slide-title" style={{ fontFamily: slide.fontFamily, fontWeight: slide.fontWeight, opacity: slide.titleOpacity ?? 1 }}>
+                            <h1 className="slide-title" style={{ fontFamily: fontStack(slide.fontFamily), fontWeight: slide.fontWeight, opacity: slide.titleOpacity ?? 1 }}>
                                 {slide.title || 'Image Title'}
                             </h1>
                             <p className="slide-content" style={{ opacity: slide.contentOpacity ?? 1 }}>{slide.content || ''}</p>
@@ -681,7 +690,7 @@ const SlideCanvas = React.forwardRef(({ slide, scale, selectedElementId, onSelec
             default:
                 return (
                     <div className="slide-layout-hook">
-                        <h1 className="slide-title" style={{ fontFamily: slide.fontFamily, fontWeight: slide.fontWeight, opacity: slide.titleOpacity ?? 1 }}>
+                        <h1 className="slide-title" style={{ fontFamily: fontStack(slide.fontFamily), fontWeight: slide.fontWeight, opacity: slide.titleOpacity ?? 1 }}>
                             {slide.title || 'Slide Title'}
                         </h1>
                         <div className="slide-divider" />
@@ -1048,9 +1057,10 @@ const CarouselEditor = ({ onClose }) => {
         setSelectedElementId(elem.id);
     }, [activeSlide, updateActiveElements]);
 
-    const convertSlideToElements = useCallback((slide) => {
-        if (slide.elements && slide.elements.length > 0) return slide.elements;
+    const convertSlideToElements = useCallback((slide, { force = false } = {}) => {
+        if (!force && slide.elements && slide.elements.length > 0) return slide.elements;
         const elems = [];
+        const preservedElements = force ? (slide.elements || []).filter((element) => !element.generatedRole) : [];
         const baseStyle = {
             fontSize: 48,
             fontFamily: slide.fontFamily || "'Cabin Sketch', cursive",
@@ -1063,39 +1073,49 @@ const CarouselEditor = ({ onClose }) => {
             textAlign: 'left',
             lineHeight: 1.2,
         };
+        const layout = {
+            'hook-content-cta': { title: [72, 100, 936, 68, 'left'], content: [72, 390, 840, 32, 'left'], bullets: [72, 620, 840, 28, 'left'] },
+            'bullet-list': { title: [72, 80, 936, 60, 'left'], content: [72, 220, 900, 28, 'left'], bullets: [72, 390, 900, 30, 'left'] },
+            'numbered-list': { title: [72, 80, 936, 60, 'left'], content: [72, 220, 900, 28, 'left'], bullets: [72, 390, 900, 30, 'left'] },
+            'big-text': { title: [72, 320, 936, 96, 'center'], content: [130, 610, 820, 32, 'center'], bullets: [130, 770, 820, 28, 'center'] },
+            split: { title: [72, 180, 405, 64, 'left'], content: [600, 180, 405, 32, 'left'], bullets: [600, 460, 405, 28, 'left'] },
+            quote: { title: [120, 310, 840, 74, 'center'], content: [170, 650, 740, 30, 'center'], bullets: [170, 790, 740, 28, 'center'] },
+            'two-column': { title: [72, 130, 410, 62, 'left'], content: [72, 330, 410, 30, 'left'], bullets: [600, 260, 400, 30, 'left'] },
+            stats: { title: [72, 85, 936, 60, 'left'], content: [72, 1120, 936, 28, 'left'], bullets: [72, 330, 936, 44, 'center'] },
+            checklist: { title: [72, 80, 936, 60, 'left'], content: [72, 220, 900, 28, 'left'], bullets: [72, 390, 900, 30, 'left'] },
+            timeline: { title: [72, 80, 936, 60, 'left'], content: [72, 220, 900, 28, 'left'], bullets: [150, 380, 800, 30, 'left'] },
+            testimonial: { title: [120, 300, 840, 68, 'center'], content: [260, 760, 560, 30, 'center'], bullets: [260, 840, 560, 26, 'center'] },
+            'image-overlay': { title: [72, 760, 936, 68, 'left'], content: [72, 980, 860, 30, 'left'], bullets: [72, 1110, 860, 26, 'left'] },
+        }[slide.layout] || { title: [72, 100, 936, 68, 'left'], content: [72, 390, 840, 32, 'left'], bullets: [72, 620, 840, 28, 'left'] };
+        const createTextElement = (generatedRole, text, [x, y, width, fontSize, textAlign], extraStyle = {}) => DEFAULT_ELEMENT({
+            type: 'text', generatedRole, x, y, width, text,
+            style: { ...baseStyle, fontSize, textAlign, ...extraStyle },
+        });
         if (slide.title) {
-            elems.push(DEFAULT_ELEMENT({
-                type: 'text',
-                x: 72,
-                y: 80,
-                width: 936,
-                text: slide.title,
-                style: { ...baseStyle, fontSize: 56, textAlign: slide.layout === 'big-text' ? 'center' : 'left' },
-            }));
+            elems.push(createTextElement('title', slide.title, layout.title));
         }
         if (slide.content) {
-            elems.push(DEFAULT_ELEMENT({
-                type: 'text',
-                x: 72,
-                y: slide.title ? 200 : 80,
-                width: 936,
-                text: slide.content,
-                style: { ...baseStyle, fontSize: 28, fontWeight: 400 },
-            }));
+            elems.push(createTextElement('content', slide.content, layout.content, { fontWeight: 400 }));
         }
         if (slide.bullets && slide.bullets.length > 0) {
             const bulletText = slide.bullets.filter(Boolean).map((b, i) => `${i + 1}. ${b}`).join('\n');
-            elems.push(DEFAULT_ELEMENT({
-                type: 'text',
-                x: 72,
-                y: slide.title || slide.content ? 380 : 80,
-                width: 936,
-                text: bulletText,
-                style: { ...baseStyle, fontSize: 24, fontWeight: 400 },
-            }));
+            elems.push(createTextElement('bullets', bulletText, layout.bullets, { fontWeight: 400 }));
         }
-        return elems.length > 0 ? elems : [DEFAULT_ELEMENT({ text: slide.title || 'Slide' })];
+        return elems.length > 0 ? [...elems, ...preservedElements] : [DEFAULT_ELEMENT({ text: slide.title || 'Slide' }), ...preservedElements];
     }, []);
+
+    // Generated text is represented by draggable elements. Rebuild only those
+    // elements whenever a global design control changes, while retaining any
+    // image or text the user added manually.
+    const applySlideDesign = useCallback((updates) => {
+        if (!activeSlide) return;
+        const nextSlide = { ...activeSlide, ...updates };
+        updateSlide(activeIndex, {
+            ...updates,
+            elements: convertSlideToElements(nextSlide, { force: true }),
+        });
+        setSelectedElementId(null);
+    }, [activeIndex, activeSlide, convertSlideToElements, updateSlide]);
 
     const addImageElement = useCallback((e) => {
         const file = e.target.files?.[0];
@@ -1505,11 +1525,7 @@ const CarouselEditor = ({ onClose }) => {
                             <div className="ce-field">
                                 <label className="ce-label">Layout</label>
                                 <select className="ce-select" value={activeSlide.layout} onChange={(e) => {
-                                    const newLayout = e.target.value;
-                                    const repositioned = activeSlide.elements?.length > 0
-                                        ? convertSlideToElements({ ...activeSlide, layout: newLayout })
-                                        : activeSlide.elements || [];
-                                    updateSlide(activeIndex, { layout: newLayout, elements: repositioned });
+                                    applySlideDesign({ layout: e.target.value });
                                 }}>
                                     {LAYOUT_OPTIONS.map(l => <option key={l.id} value={l.id}>{l.label}</option>)}
                                 </select>
@@ -1571,14 +1587,14 @@ const CarouselEditor = ({ onClose }) => {
                                 <label className="ce-label">Text Color</label>
                                 <div className="ce-color-grid">
                                     {COLOR_PALETTE.map(c => (
-                                        <button key={c.value} className={`ce-color-swatch ${activeSlide.textColor === c.value ? 'active' : ''}`} style={{ backgroundColor: c.value, border: c.value === '#FAFAFA' ? '1px solid #ccc' : 'none' }} onClick={() => updateSlide(activeIndex, { textColor: c.value })} title={c.label} />
+                                        <button key={c.value} className={`ce-color-swatch ${activeSlide.textColor === c.value ? 'active' : ''}`} style={{ backgroundColor: c.value, border: c.value === '#FAFAFA' ? '1px solid #ccc' : 'none' }} onClick={() => applySlideDesign({ textColor: c.value })} title={c.label} />
                                     ))}
                                 </div>
                             </div>
 
                             <div className="ce-field">
                                 <label className="ce-label">Font</label>
-                                <select className="ce-select" value={activeSlide.fontFamily} onChange={(e) => updateSlide(activeIndex, { fontFamily: e.target.value })}>
+                                <select className="ce-select" value={activeSlide.fontFamily} onChange={(e) => applySlideDesign({ fontFamily: e.target.value })}>
                                     {FONT_OPTIONS.map(f => <option key={f.label} value={f.value}>{f.label}</option>)}
                                 </select>
                             </div>
@@ -1590,7 +1606,7 @@ const CarouselEditor = ({ onClose }) => {
                                 <div className="ce-style-grid">
                                     {SLIDE_STYLE_PRESETS.map(preset => (
                                         <button key={preset.id} className="ce-style-chip" title={preset.label} onClick={() => {
-                                            updateSlide(activeIndex, {
+                                            applySlideDesign({
                                                 bgColor: preset.bg,
                                                 textColor: preset.text,
                                                 fontFamily: preset.font,

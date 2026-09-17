@@ -54,6 +54,16 @@ const CorridorSegment = ({
                 color: '#f5efe6'
             },
             {
+                // Same depth as Gallery, on the opposite wall.
+                id: `live-projects-${segmentIndex}`,
+                roomId: 'live-projects',
+                relativeZ: -18,
+                side: 'right',
+                label: 'LIVE PROJECTS',
+                icon: 'â—†',
+                color: '#e6f0f5'
+            },
+            {
                 id: `studio-${segmentIndex}`,
                 roomId: 'studio',
                 relativeZ: -32,

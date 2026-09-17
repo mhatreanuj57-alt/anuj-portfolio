@@ -6,6 +6,7 @@ import { useScene } from '../../../context/SceneContext';
 // Calculation: 10 (Start Z) + Relative Z + 2 (Door Offset)
 const DOOR_POSITIONS_Z = {
     'gallery': -6,   // 10 - 18 + 2
+    'live-projects': -6, // Opposite the Gallery door
     'studio': -20,   // 10 - 32 + 2
     'about': -36,    // 10 - 48 + 2
     'contact': -50,  // 10 - 62 + 2

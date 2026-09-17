@@ -1085,6 +1085,30 @@ const DoorSection = ({
                                 </Text>
                             </group>
                         )}
+                        {label === 'LIVE PROJECTS' && (
+                            <group position={[0, 0, 0.01]}>
+                                <Text
+                                    font="/fonts/CabinSketch-Bold.ttf"
+                                    fontSize={0.20}
+                                    color="#111111"
+                                    anchorX="center"
+                                    anchorY="bottom"
+                                    position={[0, -0.02, 0]}
+                                >
+                                    LIVE
+                                </Text>
+                                <Text
+                                    font="/fonts/CabinSketch-Bold.ttf"
+                                    fontSize={0.20}
+                                    color="#111111"
+                                    anchorX="center"
+                                    anchorY="top"
+                                    position={[0, 0.03, 0]}
+                                >
+                                    PROJECTS
+                                </Text>
+                            </group>
+                        )}
                         {label === 'THE STUDIO' && (
                             <group position={[0, 0, 0.01]}>
                                 <Text

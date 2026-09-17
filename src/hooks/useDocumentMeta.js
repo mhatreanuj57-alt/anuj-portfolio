@@ -25,6 +25,11 @@ const ROOM_META = {
         title: 'Gallery & Projects — Anuj Mhatre Portfolio',
         description: 'Browse the interactive 3D gallery of projects by Anuj Mhatre. Each project is displayed as a hand-drawn card you can flip and explore.',
     },
+    'live-projects': {
+        path: '/live-projects',
+        title: 'Live Projects - Anuj Mhatre Portfolio',
+        description: 'Explore Anuj Mhatre\'s live web projects and interactive builds.',
+    },
     studio: {
         path: '/studio',
         title: 'The Studio — Anuj Mhatre Portfolio',
@@ -48,6 +53,7 @@ const PATH_TO_ROOM = {
     '/about': 'about',
     '/gallery': 'gallery',
     '/studio': 'studio',
+    '/live-projects': 'live-projects',
     '/contact': 'contact',
     '/carousel': 'carousel',
 };

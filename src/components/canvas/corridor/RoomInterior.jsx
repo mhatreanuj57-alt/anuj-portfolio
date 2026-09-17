@@ -9,6 +9,7 @@ import StudioRoom from '../rooms/Studio/StudioRoom';
 import AboutRoom from '../rooms/About/AboutRoom';
 import ContactRoom from '../rooms/Contact/ContactRoom';
 import CarouselRoom from '../rooms/Carousel/CarouselRoom';
+import LiveProjectsRoom from '../rooms/LiveProjects/LiveProjectsRoom';
 
 // Room configurations
 const ROOM_CONFIG = {
@@ -25,7 +26,8 @@ const SUBTITLES = {
     'THE STUDIO': 'Watch behind the scenes',
     'DEV DIARY': 'My development journey',
     "LET'S CONNECT": 'Get in touch with me',
-    'CAROUSEL LAB': 'Create social slides with AI'
+    'CAROUSEL LAB': 'Create social slides with AI',
+    'LIVE PROJECTS': 'Explore projects currently live on the web'
 };
 
 // Naturalny kafelek listwy: 1582x94px przy wysokości 0.15 → ~2.524 units szerokości
@@ -126,7 +128,7 @@ const RoomInterior = memo(({ label, showRoom, onReady, isExiting }) => {
 
     // Trigger onReady for generic rooms (which don't have their own component to do it)
     useEffect(() => {
-        if (showRoom && !['THE GALLERY', 'THE STUDIO', 'THE ABOUT', "LET'S CONNECT", 'CAROUSEL LAB'].includes(label)) {
+        if (showRoom && !['THE GALLERY', 'THE STUDIO', 'THE ABOUT', "LET'S CONNECT", 'CAROUSEL LAB', 'LIVE PROJECTS'].includes(label)) {
             onReady?.();
         }
     }, [showRoom, label, onReady]);
@@ -227,6 +229,12 @@ const RoomInterior = memo(({ label, showRoom, onReady, isExiting }) => {
                         <group position={[0, -0.5, -corridorDepth]}>
                             <Suspense fallback={null}>
                                 <CarouselRoom showRoom={showRoom} onReady={onReady} isExiting={isExiting} />
+                            </Suspense>
+                        </group>
+                    ) : label === 'LIVE PROJECTS' ? (
+                        <group position={[0, -0.5, -corridorDepth]}>
+                            <Suspense fallback={null}>
+                                <LiveProjectsRoom showRoom={showRoom} onReady={onReady} isExiting={isExiting} />
                             </Suspense>
                         </group>
                     ) : (

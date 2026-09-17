@@ -1,12 +1,11 @@
-import { useRef, useState, useCallback, useEffect } from 'react';
+import { useRef, useCallback, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import { Text, Plane, useTexture } from '@react-three/drei';
+import { Text, Plane } from '@react-three/drei';
 import * as THREE from 'three';
 import gsap from 'gsap';
 import { PositionalAudio } from '@react-three/drei';
 import '../shaders/RevealMaterial'; // Registers alpha-discard reveal shader
-import { useAudio } from '../../../../context/AudioManager';
-import { isTouchDevice } from '../../../../utils/deviceDetect';
+import { useAudio } from '../../../context/AudioManager';
 
 // Global settings for entrance doors audio
 const ENTRANCE_DOOR_AUDIO_SETTINGS = {
@@ -27,17 +26,14 @@ const Door = ({
     icon,
     color = '#f5f0e6',
     onEnter,
-    autoCloseDelay = 3000,
-    type // Assuming 'type' is a new prop for texture selection
+    autoCloseDelay = 3000 // Assuming 'type' is a new prop for texture selection
 }) => {
     // Preload textures
     // Texture Loader Hook MUST be called indiscriminately to keep React Hooks consistent
-    const textureMap = useTexture(`/textures/corridor/doors/drzwi${type}.webp`);
-    const isTouch = isTouchDevice();
-    const dummyTex = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-    const paintedColorMap = useTexture(isTouch ? dummyTex : `/textures/corridor/doors/drzwi${type}_painted.webp`);
+
+
     // Frame
-    const frameMap = useTexture(`/textures/corridor/doors/ramkasingledoors.webp`);
+
 
     const doorRef = useRef();
     const frameRef = useRef();
@@ -205,12 +201,12 @@ const Door = ({
             </group>
 
             {/* Outline Glow (always visible but fades based on distance) */}
-            <mesh position={[0, -0.2, -0.05]} rotation={[0, Math.PI, 0]}>
+            <mesh ref={glowRef} position={[0, -0.2, -0.05]} rotation={[0, Math.PI, 0]}>
                 <planeGeometry args={[doorWidth + 0.3, doorHeight + 0.3]} />
                 <meshBasicMaterial
                     color="#e0e0e0"
                     transparent={true}
-                    opacity={glowIntensity} // Dynamic opacity based on proximity
+                    opacity={0.1}
                     depthWrite={false}
                 />
             </mesh>
@@ -262,7 +258,7 @@ const Door = ({
                             if (hoverAudioRef.current && !isHoveredRef.current) {
                                 const vol = isMuted ? 0 : ENTRANCE_DOOR_AUDIO_SETTINGS.hoverVolume * globalVolume;
                                 hoverAudioRef.current.setVolume(vol);
-                                
+
                                 // Only play if AudioContext is already running to avoid console warnings
                                 if (hoverAudioRef.current.isPlaying) hoverAudioRef.current.stop();
                                 if (hoverAudioRef.current.context.state === 'running') {

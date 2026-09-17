@@ -1,4 +1,4 @@
-import { useRef, useState, useMemo } from 'react';
+import { useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useTexture, PositionalAudio } from '@react-three/drei';
 import * as THREE from 'three';
@@ -16,7 +16,7 @@ const SEGMENT_DOOR_AUDIO_SETTINGS = {
 
 /**
  * SegmentDoors Component
- * 
+ *
  * Textured double doors at the end of a corridor segment.
  * Copies the visual style of EntranceDoors 1:1 but with auto-opening logic.
  */
@@ -80,7 +80,7 @@ const SegmentDoors = ({
 
     // Trigger distances
     const openDistance = 12;
-    const closeDistance = 18; // Close when far enough away (behind or front?) 
+    const closeDistance = 18; // Close when far enough away (behind or front?)
     // Actually, distinct logic: open when close, close when far.
     // The previous logic was: if (dist < open) open; if (dist > close) close.
 
@@ -161,7 +161,7 @@ const SegmentDoors = ({
                 <meshBasicMaterial color="#DDD6CC" map={wallTexture} roughness={0.95} />
             </mesh>
             {/* Decoration Left (Idea Process) */}
-            {/* 
+            {/*
                 EDYCJA GRAFIKI LEWEJ (Idea):
                 - rotation={[x, y, z]} -> Obrót (np. z = 0.1 to lekki przechył)
                 - args={[Szerokość, Wysokość]} -> Rozmiar
@@ -185,7 +185,7 @@ const SegmentDoors = ({
                 <meshBasicMaterial color="#DDD6CC" map={wallTexture} roughness={0.95} />
             </mesh>
             {/* Decoration Right (Coffee) */}
-            {/* 
+            {/*
                 EDYCJA GRAFIKI PRAWEJ (Coffee):
             */}
             <mesh

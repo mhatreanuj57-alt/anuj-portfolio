@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unknown-property */
 import { useRef, useState, useEffect, useMemo, useCallback } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Text, useTexture, Html, useCursor } from '@react-three/drei';
@@ -147,7 +146,7 @@ const SmoothButton = ({ texture, onClick, position, size, text, fontPath }) => {
 };
 
 // Web3Forms API Key — loaded from environment variable so it's not exposed in the repo.
-// Set VITE_WEB3FORMS_KEY in .env (local dev) and in Cloudflare Pages dashboard (production).
+// Optional public Web3Forms access key, configured at build time in Vercel.
 const WEB3FORMS_KEY = import.meta.env.VITE_WEB3FORMS_KEY || '';
 
 // Only these domains are allowed to submit the form.
@@ -156,6 +155,9 @@ const ALLOWED_ORIGINS = [
     'anujmhatre.me',
     'www.anujmhatre.me',
     'a-n-u-j-s-projects1.vercel.app',
+    'anuj-portfolio.vercel.app',
+    'localhost',
+    '127.0.0.1',
 ];
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -375,6 +377,13 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
             return;
         }
 
+        if (!WEB3FORMS_KEY) {
+            const body = `${message}\n\nReply to: ${email}`;
+            window.location.href = `mailto:anujmhatre125@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            setErrors({ message: 'Finish sending in your email app.' });
+            return;
+        }
+
         setIsSubmitting(true);
         setErrors({});
 
@@ -390,8 +399,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
             // --- 0b. Timing Trap (must spend >3s on form) ---
             const timeOnForm = Date.now() - formLoadedAt.current;
             if (timeOnForm < 3000) {
-                // Bots submit instantly — silently fake success
-                setSubmitStatus('success');
+                setErrors({ message: 'Please wait a moment before sending.' });
                 setIsSubmitting(false);
                 return;
             }
@@ -401,8 +409,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
             const currentHost = window.location.hostname;
             const isAllowedOrigin = ALLOWED_ORIGINS.some(d => currentHost === d || currentHost.endsWith('.' + d));
             if (!isAllowedOrigin) {
-                // Silently fake success so attacker thinks it worked
-                setSubmitStatus('success');
+                setErrors({ message: 'Please use anujmhatre.me to send this message.' });
                 setIsSubmitting(false);
                 return;
             }
@@ -430,13 +437,14 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
             if (domain) {
                 try {
                     const dnsRes = await fetch(`https://cloudflare-dns.com/dns-query?name=${domain}&type=MX`, {
-                        headers: { 'Accept': 'application/dns-json' }
+                        headers: { 'Accept': 'application/dns-json' },
+                        signal: AbortSignal.timeout(5000),
                     });
                     const dnsData = await dnsRes.json();
-                    
+
                     // Status 0 is NOERROR. If no MX records (type 15), domain can't receive mail.
                     // Status 3 is NXDOMAIN (domain doesn't exist at all).
-                    if (dnsData.Status === 3 || (dnsData.Status === 0 && (!dnsData.Answer || !dnsData.Answer.some(a => a.type === 15)))) {
+                    if (dnsData.Status === 3) {
                         setErrors({ email: 'Domain does not exist or cannot receive emails.' });
                         setIsSubmitting(false);
                         return;
@@ -448,6 +456,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
 
             const response = await fetch('https://api.web3forms.com/submit', {
                 method: 'POST',
+                signal: AbortSignal.timeout(15000),
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
@@ -476,7 +485,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
             } else {
                 throw new Error(result.message || 'Failed to send');
             }
-        } catch (error) {
+        } catch {
             // console.error('❌ Send failed:', error);
             setSubmitStatus('error');
         } finally {
@@ -548,7 +557,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
 
     // Store original vertex positions for fold animation
     // Paper animation (flutter)
-    useFrame((state, delta) => {
+    useFrame((state) => {
         if (!paperRef.current) return;
 
         const time = state.clock.getElapsedTime();
@@ -653,7 +662,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                     onClick={handleButtonClick}
                     position={[0, 0.005, 0.68]}
                     size={[0.5, 0.13]}
-                    text={isSubmitting ? 'SENDING...' : 'SEND'}
+                    text={isSubmitting ? 'SENDING...' : WEB3FORMS_KEY ? 'SEND' : 'OPEN EMAIL'}
                     fontPath={FONT_PATH}
                 />
 

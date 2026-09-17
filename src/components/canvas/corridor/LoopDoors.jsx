@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Text } from '@react-three/drei';
 import * as THREE from 'three';
@@ -6,7 +6,7 @@ import gsap from 'gsap';
 
 /**
  * LoopDoors Component
- * 
+ *
  * Double doors at the end of corridor that automatically open
  * when the camera approaches, creating an infinite loop illusion.
  */
@@ -16,6 +16,7 @@ const LoopDoors = ({
     onLoopTriggered
 }) => {
     const leftDoorRef = useRef();
+    const rightDoorRef = useRef();
     const isOpenRef = useRef(false);
     const hasTriggeredRef = useRef(false);
     const { camera } = useThree();

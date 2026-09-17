@@ -3,7 +3,7 @@ import { useScene } from '../context/SceneContext';
 
 /**
  * useDocumentMeta — Dynamic Meta Tags & Virtual Routing (History API)
- * 
+ *
  * Updates the browser URL, page title, and meta description
  * whenever the user enters/exits a 3D room. Also handles the
  * browser back/forward buttons for seamless navigation.
@@ -62,12 +62,16 @@ export function getInitialRoomFromUrl() {
 }
 
 export function useDocumentMeta() {
-    const { currentRoom, teleportTo, hasEntered, exitRoom, cancelTeleport, isTeleporting } = useScene();
+    const { currentRoom, teleportTo, hasEntered, exitRoom, cancelTeleport, isTeleporting, initialRoom, deeplinkHandled } = useScene();
     const isHandlingPopState = useRef(false);
+    const popTarget = useRef(null);
     const lastPushedRoom = useRef(undefined); // Track what we last pushed to avoid duplicates
 
     // Update document meta and URL when room changes
     useEffect(() => {
+        // Preserve a direct room URL while the entrance and initial teleport load.
+        if (initialRoom && currentRoom === null && (!deeplinkHandled.current || isTeleporting || !hasEntered)) return;
+        if (isHandlingPopState.current && currentRoom !== popTarget.current) return;
         const roomKey = currentRoom === null ? 'null' : currentRoom;
         const meta = ROOM_META[roomKey] || ROOM_META['null'];
 
@@ -86,6 +90,8 @@ export function useDocumentMeta() {
 
         const ogDesc = document.querySelector('meta[property="og:description"]');
         if (ogDesc) ogDesc.setAttribute('content', meta.description);
+        document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', meta.title);
+        document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', meta.description);
 
         const ogUrl = document.querySelector('meta[property="og:url"]');
         if (ogUrl) ogUrl.setAttribute('content', `https://anujmhatre.me${meta.path}`);
@@ -106,14 +112,19 @@ export function useDocumentMeta() {
             }
             lastPushedRoom.current = currentRoom;
         }
+        if (isHandlingPopState.current && currentRoom === popTarget.current) {
+            isHandlingPopState.current = false;
+            lastPushedRoom.current = currentRoom;
+        }
 
-    }, [currentRoom]);
+    }, [currentRoom, initialRoom, deeplinkHandled, isTeleporting, hasEntered]);
 
     // Handle browser back/forward buttons
     useEffect(() => {
         const handlePopState = (event) => {
             isHandlingPopState.current = true;
-            const targetRoom = event.state?.room ?? null;
+            const targetRoom = event.state?.room ?? getInitialRoomFromUrl();
+            popTarget.current = targetRoom;
             lastPushedRoom.current = targetRoom;
 
             if (targetRoom === null) {
@@ -126,11 +137,11 @@ export function useDocumentMeta() {
                 }
                 teleportTo(targetRoom);
             }
-            // Reset flag after processing so next pushState isn't skipped
-            isHandlingPopState.current = false;
+            // Keep history suppressed until the asynchronous room transition finishes.
+            if (targetRoom === currentRoom) isHandlingPopState.current = false;
         };
 
         window.addEventListener('popstate', handlePopState);
         return () => window.removeEventListener('popstate', handlePopState);
-    }, [teleportTo, hasEntered, exitRoom, cancelTeleport, isTeleporting]);
+    }, [teleportTo, hasEntered, exitRoom, cancelTeleport, isTeleporting, currentRoom]);
 }

@@ -12,10 +12,9 @@ import { isTouchDevice } from '../../../utils/deviceDetect';
 const FONT_URL = 'https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hjp-Ek-_EeA.woff';
 
 
-
 /**
  * EntranceDoors Component - 3D Entrance to the Corridor
- * 
+ *
  * Doors that open and camera flies through.
  * EmptyCorridor provides the surrounding corridor context.
  */
@@ -37,9 +36,9 @@ const EntranceDoors = ({
     const rightHandlePaintedRef = useRef(); // Painted handle mesh visibility
     const groupRef = useRef();
     const [isOpen, setIsOpen] = useState(false);
-    const [isHovered, setIsHovered] = useState(false);
+    const [, setIsHovered] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
-    const [isWindowHovered, setIsWindowHovered] = useState(false);
+    const [, setIsWindowHovered] = useState(false);
     const windowAvatarRef = useRef();
     const { camera } = useThree();
     const { unlockAchievement } = useAchievements();
@@ -91,7 +90,7 @@ const EntranceDoors = ({
 
     // Bug Click Animation State
     const [isBugClicked, setIsBugClicked] = useState(false);
-    const [textVisible, setTextVisible] = useState(false);
+    const [, setTextVisible] = useState(false);
     const [clipProgress, setClipProgress] = useState(0); // 0-1 for pencil drawing reveal
     const inkSplashRef = useRef();
     const handleHideDelayRef = useRef(); // Track pending gsap.delayedCall for handle visibility
@@ -224,7 +223,6 @@ const EntranceDoors = ({
     // ... (lines omitted)
 
 
-
     // Door dimensions - calculated from texture proportions (332x848 = 1:2.55)
     // Door dimensions - calculated from texture proportions (332x848 = 1:2.55)
     const doorWidth = 0.94;
@@ -244,7 +242,6 @@ const EntranceDoors = ({
     const topWallHeight = corridorHeight - doorHeight;
     const topWallCenterY = doorBottomY + doorHeight + topWallHeight / 2;
     const sideWallWidth = (corridorWidth - doorOpeningWidth) / 2;
-
 
 
     // Cat Interaction State
@@ -306,6 +303,12 @@ const EntranceDoors = ({
             ease: 'power2.inOut'
         }, 0.3);
     };
+
+    useEffect(() => {
+        const enter = () => handleClick({ stopPropagation() {} });
+        window.addEventListener('portfolio:enter', enter);
+        return () => window.removeEventListener('portfolio:enter', enter);
+    });
 
     // Handle hover - doors slightly open to indicate interactivity
     const handlePointerEnter = () => {
@@ -463,7 +466,6 @@ const EntranceDoors = ({
     };
 
 
-
     // --- Cat Eye Tracking Logic ---
     useFrame((state) => {
         if (!leftPupilRef.current || !rightPupilRef.current) return;
@@ -517,7 +519,6 @@ const EntranceDoors = ({
     });
 
 
-
     // Helper for window hover
     const handleWindowEnter = (e) => {
         e.stopPropagation();
@@ -568,7 +569,7 @@ const EntranceDoors = ({
 
 
     const pathWidth = frameWidth + 0.4;
-    // New texture is 1005x2317 (approx 1:2.3 ratio). 
+    // New texture is 1005x2317 (approx 1:2.3 ratio).
     // Width 2.44 * 2.3 = ~5.6 height.
     const pathLength = 5.62;
 
@@ -608,7 +609,7 @@ const EntranceDoors = ({
             </mesh>
 
             {/* === BRICK FACADE === */}
-            {/* 
+            {/*
                 DOSTOSOWANIE OBRAZKA (TEXTURE ADJUSTMENT):
                 1. args={[Szerokość, Wysokość]} - Rozmiar obrazka
                 2. facadeYOffset - Przesunięcie góra/dół (np. -1 obniży, 1 podwyższy)
@@ -942,9 +943,6 @@ const EntranceDoors = ({
             >
                 BUG FIXED!
             </Text>
-
-
-
 
 
             {/* TREE & MOUSE (Left Side) */}

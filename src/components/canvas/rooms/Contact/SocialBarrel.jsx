@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useTexture, Text } from '@react-three/drei';
 import * as THREE from 'three';
@@ -15,8 +15,8 @@ const SocialBarrel = ({ position, rotation = [0, 0, 0], texturePath, label, onCl
     const paintedRef = useRef();
     const hideDelayRef = useRef();
 
-    // Load texture based on prop. 
-    // Note: If you change the texture on the fly, this might suspend. 
+    // Load texture based on prop.
+    // Note: If you change the texture on the fly, this might suspend.
     // Ideally textures are preloaded or consistent.
     const texture = useTexture(texturePath);
     // Determine the painted texture path from the base texture path
@@ -51,12 +51,12 @@ const SocialBarrel = ({ position, rotation = [0, 0, 0], texturePath, label, onCl
             if (paintUniforms && textRef.current) {
                 const localPos = meshRef.current.position;
                 const revealDir = new THREE.Vector3(1.0, 0.0, -0.1).normalize();
-                
+
                 const pStartDist = -5.0;
                 const pEndDist = 55.0;
                 const pTargetDist = THREE.MathUtils.lerp(pStartDist, pEndDist, paintUniforms.uPaintProgress.value);
                 const pDistFromPlane = pTargetDist - localPos.dot(revealDir);
-                
+
                 textRef.current.fillOpacity = THREE.MathUtils.clamp(pDistFromPlane, 0, 1);
             }
         }

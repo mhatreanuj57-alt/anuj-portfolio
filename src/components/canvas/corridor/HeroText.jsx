@@ -8,11 +8,11 @@ const RUBIK_SCRIBBLE_URL = '/fonts/RubikScribble-Regular.ttf';
 const CABIN_SKETCH_URL = '/fonts/CabinSketch-Regular.ttf';
 
 // Global flag - draw animation only happens ONCE per page load
-let hasPlayedDrawAnimation = false;
+
 
 /**
  * HeroText Component - Hand-drawn Style with Sketch Fonts
- * 
+ *
  * WOW Effects for Awwwards SOTD:
  * - ANUJ in Rubik Scribble font (splits into letters during scroll)
  * - Creative engineer in Cabin Sketch font (also splits)
@@ -71,7 +71,7 @@ const HeroText = ({ position = [0, 0.3, 0] }) => {
     ], []);
 
     // Animation loop
-    useFrame((state, delta) => {
+    useFrame((state) => {
         if (!groupRef.current) return;
 
         const time = state.clock.elapsedTime;

@@ -1,9 +1,6 @@
 import { useAudio } from '../../context/AudioManager';
 import '../../styles/AudioControls.scss';
 
-const AudioControls = () => {
-    const { isMuted, toggleMute, globalVolume, setGlobalVolume } = useAudio();
-
     // Hand-drawn SVG Icons
     const SoundOnIcon = () => (
         <svg viewBox="0 0 24 24">
@@ -20,6 +17,9 @@ const AudioControls = () => {
             <line x1="17" y1="9" x2="23" y2="15" />
         </svg>
     );
+
+const AudioControls = () => {
+    const { isMuted, toggleMute, globalVolume, setGlobalVolume } = useAudio();
 
     return (
         <div className="audio-controls">

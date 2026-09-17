@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import posthog from 'posthog-js';
+import { writePreference } from '../utils/storage';
 
 const AchievementsContext = createContext();
 
@@ -29,7 +30,7 @@ export const AchievementsProvider = ({ children }) => {
                 return filtered;
             }
             return [];
-        } catch (e) {
+        } catch {
             return [];
         }
     });
@@ -82,7 +83,7 @@ export const AchievementsProvider = ({ children }) => {
             // Audio is muted by start/stop being commented out, but we still ensure context logic is clean
             // osc.start(ctx.currentTime);
             // osc.stop(ctx.currentTime + 0.5);
-        } catch (err) {
+        } catch {
             // console.warn('Failed to play unlock chime', err);
         }
     }, []);
@@ -94,7 +95,7 @@ export const AchievementsProvider = ({ children }) => {
     // Save to localStorage when completed changes
     useEffect(() => {
         const toSave = completed.filter(id => id !== 'corridor_enter');
-        localStorage.setItem('anuj_achievements', JSON.stringify(toSave));
+        writePreference('anuj_achievements', JSON.stringify(toSave));
     }, [completed]);
 
     const showTutorial = useCallback((id) => {
@@ -117,7 +118,7 @@ export const AchievementsProvider = ({ children }) => {
                 const updated = [...prev, id];
                 // Save locally excluding corridor_enter
                 const toSave = updated.filter(item => item !== 'corridor_enter');
-                localStorage.setItem('anuj_achievements', JSON.stringify(toSave));
+                writePreference('anuj_achievements', JSON.stringify(toSave));
                 return updated;
             });
 

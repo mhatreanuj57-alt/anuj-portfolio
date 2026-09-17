@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Text, PositionalAudio } from '@react-three/drei';
 import * as THREE from 'three';
@@ -31,7 +31,7 @@ const STORY_MILESTONES = [
     { id: 'skills', position: [0, 0, -135], type: 'skills', title: 'SKILLS', subtitle: 'Python • React • Three.js • AI/ML • Hardware' },
 ];
 
-const AboutRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
+const AboutRoom = ({  onReady, isExiting, isWarmup }) => {
     const { camera } = useThree();
     const { isTeleporting, overlayContent } = useScene();
     const { showTutorial, unlockAchievement, hidePopup } = useAchievements();

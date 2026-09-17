@@ -2,6 +2,8 @@
  * Simple Global Audio Manager for background music
  */
 
+import { readPreference } from './storage';
+
 let bgMusicAudio = null;
 let isMuted = false;
 let bgMusicStarted = false;
@@ -11,7 +13,7 @@ export const initAudio = () => {
     if (typeof window === 'undefined') return;
 
     // Sync muted state from localStorage (same key as AudioManager context)
-    const savedMuted = localStorage.getItem('audio_muted');
+    const savedMuted = readPreference('audio_muted');
     isMuted = savedMuted === 'true';
 
     if (!bgMusicAudio) {

@@ -1,5 +1,5 @@
 import { useRef, useState, useMemo, useEffect, forwardRef, useImperativeHandle, memo } from 'react';
-import { useFrame, useThree } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
 import { Text, useTexture, Float, PositionalAudio } from '@react-three/drei';
 import * as THREE from 'three';
 import gsap from 'gsap';
@@ -34,44 +34,7 @@ export const GALLERY_INTERACTION_AUDIO_SETTINGS = {
 };
 
 // Define the unique projects and their textures
-const FALLBACK_PROJECTS = [
-    {
-        id: '67game',
-        title: '67 GAME',
-        front: '/textures/gallery/timberkittyprzod.webp',
-        painted: '/textures/gallery/timberkittyprzod_painted.webp',
-        url: 'https://github.com/anu-mhatre-1812',
-        description: '67 GAME — browser-based game project.',
-        techStack: ['/textures/gallery/jslogo.webp', '/textures/gallery/htmllogo.webp', '/textures/gallery/csslogo.webp', '/textures/gallery/reactlogo.webp']
-    },
-    {
-        id: 'uicomp',
-        title: 'UI COMP',
-        front: '/textures/gallery/monetuneprzod.webp',
-        painted: '/textures/gallery/monetuneprzod_painted.webp',
-        url: 'https://github.com/anu-mhatre-1812',
-        description: 'UI COMP — reusable UI component library.',
-        techStack: ['/textures/gallery/reactlogo.webp', '/textures/gallery/tailwindlogo.webp', '/textures/gallery/htmllogo.webp', '/textures/gallery/csslogo.webp']
-    },
-    {
-        id: 'minigpt',
-        title: 'MINI-GPT',
-        front: '/textures/gallery/timberkittyprzod.webp',
-        painted: '/textures/gallery/timberkittyprzod_painted.webp',
-        url: 'https://github.com/anu-mhatre-1812/mini-gpt',
-        description: 'GPT-style transformer from scratch in pure PyTorch — char-level, trained on Marathi Wikipedia. No transformers library, every component hand-built.',
-        techStack: ['/textures/gallery/reactlogo.webp', '/textures/gallery/jslogo.webp', '/textures/gallery/htmllogo.webp', '/textures/gallery/csslogo.webp']
-    },
-    {
-        id: 'navimumbai',
-        title: 'NAVI MUMBAI PRICE',
-        front: '/textures/gallery/bioprzod.webp',
-        painted: '/textures/gallery/bioprzod_painted.webp',
-        url: 'https://github.com/anu-mhatre-1812/navi-mumbai-house-price-prediction',
-        description: 'Navi Mumbai home price finder — Streamlit app + FastAPI + Docker + CI. 1401 listings, 13 localities, price-band confusion matrix, live on Render + HF.',
-        techStack: ['/textures/gallery/reactlogo.webp', '/textures/gallery/tailwindlogo.webp', '/textures/gallery/htmllogo.webp', '/textures/gallery/netlifylogo.webp']
-    },
-];
+import { FALLBACK_PROJECTS } from '../../../../config/projects';
 
 const PROJECT_COUNT = 10; // Keep the count for the infinite scroll feel
 const GAP = 2.5;
@@ -86,7 +49,7 @@ const BIRD_HEIGHT = 0.35;
 const RIGHT_CROP_AMOUNT = 0.2;
 
 const GalleryRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
-    const { openOverlay, isTeleporting } = useScene();
+    const {  isTeleporting } = useScene();
     const { showTutorial, unlockAchievement, hidePopup } = useAchievements();
     const { globalVolume, isMuted } = useAudio();
     const effectiveVolume = isMuted ? 0 : AUDIO_SETTINGS.volume * globalVolume;
@@ -99,7 +62,6 @@ const GalleryRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
     }, [effectiveVolume]);
 
     const groupRef = useRef();
-    const [scrollOffset, setScrollOffset] = useState(0);
     const targetScroll = useRef(0);
     const currentScroll = useRef(0);
     const [selectedCard, setSelectedCard] = useState(null);
@@ -114,11 +76,11 @@ const GalleryRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
 
     // Setup Paint Transition
     const { onBeforeCompile, animatePaint, resetPaint, uniformsData, updateRoomOrigin } = usePaintMaterial();
-    
+
     // Track transition state to disable interactions
     const [isTransitioning, setIsTransitioning] = useState(false);
-    
-    // Track if user teleported into this room 
+
+    // Track if user teleported into this room
     const wasTeleportedRef = useRef(false);
     useEffect(() => {
         if (isTeleporting) wasTeleportedRef.current = true;
@@ -137,7 +99,7 @@ const GalleryRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
                 resetPaint();
                 // Start the paint animation with a slight delay so it happens *during* fly-in
                 animatePaint(0.2, 2.5);
-                
+
                 // Re-enable interactions once painting finishes
                 const timer = setTimeout(() => {
                     setIsTransitioning(false);
@@ -246,7 +208,7 @@ const GalleryRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
             return `/textures/gallery/${name}_painted.webp`;
         });
     }, [canHover]);
-    
+
     useTexture(allLogos);
 
     // Construct the full list of projects (repeated) with textures attached
@@ -392,7 +354,7 @@ const GalleryRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
         floorMat.onBeforeCompile = onBeforeCompile;
         floorMat.transparent = true;
         floorMat.needsUpdate = true;
-        
+
         const ropeMat = new THREE.MeshBasicMaterial({ color: '#666666' });
         ropeMat.onBeforeCompile = onBeforeCompile;
         ropeMat.transparent = true;
@@ -688,7 +650,7 @@ const FlyingBird = ({ texture }) => {
 };
 
 // Sub-component for individual project cards
-const ProjectCard = memo(forwardRef(({ index, project, clothespinTexture, currentScroll, materials, curve, isSelected, scrollToIndex, onClick, isMobile, isTransitioning, paintProgress, roomOrigin }, ref) => {
+const ProjectCard = memo(forwardRef(({ index, project, clothespinTexture, currentScroll, curve, isSelected, scrollToIndex, onClick, isMobile, isTransitioning, paintProgress, roomOrigin }, ref) => {
     const cardRef = useRef();
     const paperRef = useRef(); // Ref for the moving part (Paper)
     const materialRef = useRef();
@@ -703,7 +665,7 @@ const ProjectCard = memo(forwardRef(({ index, project, clothespinTexture, curren
     const [hovered, setHovered] = useState(false);
     const [btnHovered, setBtnHovered] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);  // True ONLY during flip animation
-    const [isScrolling, setIsScrolling] = useState(false);  // True during scroll phase
+    const [, setIsScrolling] = useState(false);  // True during scroll phase
 
     // Random sway properties
     const swaySpeed = useRef(Math.random() * 0.2 + 0.3); // Slower sway speed
@@ -952,7 +914,7 @@ const ProjectCard = memo(forwardRef(({ index, project, clothespinTexture, curren
             const p = paintProgress.value;
             // Instantly reveal if we teleported
             const expectedOpacity = p >= 1.0 ? 1.0 : THREE.MathUtils.clamp((p - 0.3) * 2.0, 0.0, 1.0);
-            
+
             if (textRef.current.fillOpacity !== expectedOpacity) {
                 const applyOpacity = (ref) => {
                     if (ref.current) {
@@ -1270,15 +1232,15 @@ const ProjectCard = memo(forwardRef(({ index, project, clothespinTexture, curren
                     </group>
                 </group>
 
-                {/* 
+                {/*
                   === TEKST / TYTUŁY PROJEKTÓW ===
                   Tu możesz łatwo dostosować wygląd każdego napisu.
-                  
-                  position: [X, Y, Z] 
+
+                  position: [X, Y, Z]
                   > X to lewo/prawo (0 to środek)
                   > Y to góra/dół (np. 0.75 to góra kartki, -0.75 dół)
                   > Z nie ruszać. Skrypt powyżej sam wylicza Z, żeby napis zginał się i przyklejał do fali kartki!
-                  
+
                   fontSize: rozmiar fontu (domyślnie 0.15)
                   color: kolor napisu
                   font: opcjonalnie dajesz tu inną czcionkę z folderu /public/fonts/
@@ -1329,7 +1291,7 @@ const RightSideHouses = ({ texture, baseWidth, baseHeight, cropAmount }) => {
     const newWidth = baseWidth * (1 - cropAmount);
 
     // Original Inner Edge (World Left of this mesh) was at CenterX - Width/2
-    // For the Right Side Mesh: 
+    // For the Right Side Mesh:
     // Original Pos = 15. Width = 15.
     // Inner Edge = 15 - 7.5 = 7.5.
     // We want to keep Inner Edge at 7.5.

@@ -1,8 +1,8 @@
-import { useRef, useState, useEffect, useCallback } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Text, PositionalAudio } from '@react-three/drei';
 import * as THREE from 'three';
-import gsap from 'gsap';
+import 'gsap';
 import MessagePaper from './MessagePaper';
 import SocialBarrel from './SocialBarrel';
 import { useScene } from '../../../../context/SceneContext';
@@ -139,7 +139,7 @@ const ContactRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
     }, [seaTexture, moloTexture]);
 
     useEffect(() => {
-        // Change to YXZ smoothly on mount for proper head nodding, 
+        // Change to YXZ smoothly on mount for proper head nodding,
         // avoiding mathematical snapping of the Euler angles.
         camera.rotation.reorder('YXZ');
 
@@ -161,7 +161,7 @@ const ContactRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
         noiseAxes: 'yz'
     });
 
-    const [isTransitioning, setIsTransitioning] = useState(false);
+    const [, setIsTransitioning] = useState(false);
 
     const wasTeleportedRef = useRef(false);
     useEffect(() => {
@@ -192,7 +192,7 @@ const ContactRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
     const FRAMES_TO_WAIT = 5;
 
     // Phase state
-    const [currentPhase, setCurrentPhase] = useState(PHASE.ENTERING);
+    const [, setCurrentPhase] = useState(PHASE.ENTERING);
     const [showSelection, setShowSelection] = useState(true);
 
     const hasAnimatedDown = useRef(false);
@@ -201,7 +201,7 @@ const ContactRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
     if (isExiting && !hasExitTriggered.current) {
         hasExitTriggered.current = true;
         // Do NOT reorder to XYZ here. Let DoorSection's GSAP animate camera back to the door
-        // while remaining in YXZ order. This prevents "neck snapping" because interpolating 
+        // while remaining in YXZ order. This prevents "neck snapping" because interpolating
         // to X=0 in YXZ order naturally lifts the head up without twisting the neck.
     }
 
@@ -249,9 +249,9 @@ const ContactRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
 
     const handleMailSelect = () => {
         // Awaryjne przekierowanie mailto:
-        window.location.href = 'mailto:tomszma12@gmail.com';
+        window.location.href = 'mailto:anujmhatre125@gmail.com';
 
-        /* 
+        /*
         setShowSelection(false);
 
         // Trigger the look down sequence
@@ -414,7 +414,7 @@ const ContactRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
                 rotation={[0, 0.3, 0]}
                 texturePath="/textures/contact/beczka.webp"
                 label="GITHUB"
-                onClick={() => window.open('https://github.com/a18-n03', '_blank')}
+                onClick={() => window.open('https://github.com/anu-mhatre-1812', '_blank')}
                 paintOnBeforeCompile={onBeforeCompile}
                 paintUniforms={uniformsData}
             />
@@ -498,13 +498,13 @@ const ContactRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
             </mesh>
 
             {/* 📜 INTERACTIVE MESSAGE PAPER */}
-            {/* Only show when not selecting or when diving in? 
+            {/* Only show when not selecting or when diving in?
                 Actually we want it there but enabled only after selection
             */}
             <group visible={!showSelection}>
                 <MessagePaper
                     position={[0, 0.07, 2]}
-                    onSend={(data) => {
+                    onSend={() => {
                         // console.log('📬 Contact form submitted:', data);
                         unlockAchievement('contact_submit');
                     }}

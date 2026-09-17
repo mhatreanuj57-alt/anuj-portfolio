@@ -1,20 +1,22 @@
 import { useScene } from '../../context/SceneContext';
 import { useGalleryProjects, useStudioContent, useAwards } from '../../hooks/useSanityData';
+import { FALLBACK_PROJECTS } from '../../config/projects';
+import { CONTENT_DATA } from '../canvas/rooms/Studio/contentData';
 import '../../styles/ScreenReaderOverlay.scss';
 
 /**
  * ScreenReaderOverlay — A7 Accessibility
- * 
+ *
  * Invisible HTML layer providing screen reader access to 3D canvas content.
  * Contains buttons/links matching interactive 3D elements (doors, rooms).
  * Visually hidden via .sr-only but fully accessible to assistive tech.
  */
 const ScreenReaderOverlay = () => {
     const { hasEntered, isInRoom, currentRoom, teleportTo, requestExit } = useScene();
-    
+
     // Pobieranie danych do wygenerowania niewidocznego HTML-a dla SEO / robotów
-    const projects = useGalleryProjects();
-    const studio = useStudioContent();
+    const projects = useGalleryProjects() || FALLBACK_PROJECTS;
+    const studio = useStudioContent() || CONTENT_DATA;
     const awards = useAwards();
 
     return (
@@ -25,12 +27,12 @@ const ScreenReaderOverlay = () => {
             </a>
 
             {/* Main accessible navigation */}
-            <nav id="sr-main-nav" className="sr-only" aria-label="Portfolio rooms">
+            <nav id="sr-main-nav" tabIndex={-1} className="sr-only" aria-label="Portfolio rooms">
                 <h1>Anuj — Creative Engineer Portfolio</h1>
                 <h2>Portfolio Navigation</h2>
 
                 {!hasEntered && (
-                    <p>Welcome to Anuj's interactive 3D portfolio. Click or press Enter on the doors to enter.</p>
+                    <><p>Welcome to Anuj's interactive 3D portfolio.</p><button type="button" onClick={() => window.dispatchEvent(new Event('portfolio:enter'))}>Enter portfolio</button></>
                 )}
 
                 {hasEntered && !isInRoom && (
@@ -78,7 +80,7 @@ const ScreenReaderOverlay = () => {
                             <div aria-label="About room content">
                                 <h3>About Me</h3>
                                 <p>This room contains my personal story, awards, journey milestones, and technology skills displayed as interactive balloons.</p>
-                                
+
                                 {awards && (
                                     <section>
                                         <h4>My Awards</h4>
@@ -101,7 +103,7 @@ const ScreenReaderOverlay = () => {
                             <div aria-label="Gallery room content">
                                 <h3>My Projects</h3>
                                 <p>Browse through my portfolio projects displayed on paper cards. Click on a project card to see details and visit the live site.</p>
-                                
+
                                 {projects && projects.length > 0 && (
                                     <ul>
                                         {projects.map((p, i) => (
@@ -118,6 +120,7 @@ const ScreenReaderOverlay = () => {
                         {currentRoom === 'contact' && (
                             <div aria-label="Contact room content">
                                 <h3>Contact Me</h3>
+                                <p><a href="mailto:anujmhatre125@gmail.com">Email Anuj</a> · <a href="https://github.com/anu-mhatre-1812">GitHub</a> · <a href="https://www.linkedin.com/in/anuj-mhatre-031807ma">LinkedIn</a></p>
                                 <p>Find my social media links displayed as floating barrels. Click to visit my profiles on LinkedIn, GitHub, and other platforms.</p>
                             </div>
                         )}

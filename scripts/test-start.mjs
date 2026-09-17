@@ -53,6 +53,7 @@ function setup({ reduced = false } = {}) {
   const notice = new Element();
   const document = Object.assign(new Element(), {
     hidden: false,
+    getElementById: () => null,
     querySelector: () => notice,
     querySelectorAll: selector => selector === '.work-link' ? links : [links[1]],
     createElement: () => new Element(),
@@ -78,18 +79,17 @@ function setup({ reduced = false } = {}) {
 
 test('all destinations are present in HTML, and the portfolio appears once', () => {
   const anchors = [...html.matchAll(/<a\b([^>]+)>([\s\S]*?)<\/a>/g)];
-  assert.equal(anchors.length, 14); // Thirteen destinations and the skip link.
+  assert.equal(anchors.length, 6); // Portfolio, four contact links, and skip link.
   assert.equal(anchors.filter(match => /href="\/"/.test(match[1])).length, 1);
-  assert.equal(anchors.filter(match => /data-pending/.test(match[1])).length, 8);
+  assert.equal(anchors.filter(match => /data-pending/.test(match[1])).length, 0);
   const urls = anchors.map(match => match[1].match(/href="(https:[^"]+)"/)?.[1]).filter(Boolean);
   assert.deepEqual(urls, [
-    'https://www.facebook.com/people/ITom/61586563487664/',
-    'https://github.com/ITomPoland',
-    'https://www.instagram.com/itom.dev/',
-    'https://www.linkedin.com/in/tomasz-szmajda-259337305/',
+    'https://www.instagram.com/anu__m.1812/',
+    'https://www.linkedin.com/in/anuj-mhatre-031807ma/',
+    'https://github.com/anu-mhatre-1812',
   ]);
   assert.match(html, /aria-label="Interactive Portfolio"/);
-  assert.match(html, /aria-label="UI Sketchbook"/);
+  assert.match(html, /href="mailto:anujmhatre125@gmail.com"/);
 });
 
 test('static entry stays isolated and uses only one locally hosted font', () => {

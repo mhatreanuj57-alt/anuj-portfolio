@@ -69,9 +69,9 @@ const DoorWallSegment = ({ position, baseRotationY, width, corridorHeight, wallT
 
 /**
  * CorridorWalls Component
- * 
+ *
  * Renders the floor, ceiling, and the Sawtooth Walls.
- * 
+ *
  * @param {Array} doorPositions - Array of door objects with { relativeZ, side, ... }
  * @param {number} zClip - Optional Z value to clip geometry (hide anything with Z > zClip)
  */
@@ -103,10 +103,9 @@ const CorridorWalls = ({ zStart = 10, length = 80, doorPositions = [], zClip = 1
     // We only render from Math.min(zStart, zClip) down to (zStart - length)
     const effectiveStart = Math.min(zStart, zClip);
     const effectiveLength = effectiveStart - (zStart - length);
-    const zCenter = effectiveStart - effectiveLength / 2;
+
 
     // If fully clipped, render nothing
-    if (effectiveLength <= 0) return null;
 
     // =============================================
     // REGULACJA PRZYCIĘCIA LISTWY PRZY DRZWIACH
@@ -177,7 +176,7 @@ const CorridorWalls = ({ zStart = 10, length = 80, doorPositions = [], zClip = 1
             const dx = innerX - baseX;
             const dz = doorEndZ - doorStartZ; // Negative (-4)
             const dist = Math.sqrt(dx * dx + dz * dz);
-            const angle = Math.atan2(dx, dz); // Angle relative to Z axis?
+             // Angle relative to Z axis?
             // atan2(dx, dz). Left: dx = 1.8, dz = -4. Angle ~ 155 deg.
             // Standard wall normal is 90 deg.
             // We want rotation around Y.
@@ -198,11 +197,11 @@ const CorridorWalls = ({ zStart = 10, length = 80, doorPositions = [], zClip = 1
             // 65 deg = Pointing mostly +X, slightly -Z.
             // This aligns with vector.
             // Normal is +90 deg from that?
-            // Left: dx=1.8, dz=-4. atan2(-4, 1.8) = -1.14 rad. -(-1.14) = +1.14. 
+            // Left: dx=1.8, dz=-4. atan2(-4, 1.8) = -1.14 rad. -(-1.14) = +1.14.
             // Normal (+0.9, +0.4) -> Right/Back. Correct for Left Wall.
-            // Right: dx=-1.8, dz=-4. atan2(-4, -1.8) = -1.9 rad (-110deg). -(-1.9) = +1.9. 
+            // Right: dx=-1.8, dz=-4. atan2(-4, -1.8) = -1.9 rad (-110deg). -(-1.9) = +1.9.
             // Normal (+0.3, -0.9)? No. Check Math.
-            // We need Right Wall Normal to point (-X, +Z). 
+            // We need Right Wall Normal to point (-X, +Z).
             // Adding PI fixes the backface issue.
 
             const baseRotation = -Math.atan2(dz, dx);
@@ -262,6 +261,8 @@ const CorridorWalls = ({ zStart = 10, length = 80, doorPositions = [], zClip = 1
     const leftSegments = useMemo(() => generateWallSegments('left'), [effectiveStart, effectiveLength, doorPositions]);
     const rightSegments = useMemo(() => generateWallSegments('right'), [effectiveStart, effectiveLength, doorPositions]);
 
+    if (effectiveLength <= 0) return null;
+
     return (
         <group>
             {/* =============================================
@@ -270,7 +271,7 @@ const CorridorWalls = ({ zStart = 10, length = 80, doorPositions = [], zClip = 1
                 Każdy kafelek jest płaskim plane z teksturą kawalekpodlogi.png
                 Co drugi kafelek jest obrócony o 180° i lustrzanie odbity
                 żeby fajnie się łączyły ze sobą.
-                
+
                 USTAWIENIA DO RĘCZNEJ REGULACJI:
                 - TILE_LENGTH: długość jednego kafelka (w unitach 3D)
                 - TILE_WIDTH: szerokość (powinna pasować do korytarza = 7)
@@ -468,7 +469,6 @@ const CorridorWalls = ({ zStart = 10, length = 80, doorPositions = [], zClip = 1
                         </group>
                     );
                 })}
-
 
 
             {/* Baseboards (Approximated or skip for complex geo for now) */}

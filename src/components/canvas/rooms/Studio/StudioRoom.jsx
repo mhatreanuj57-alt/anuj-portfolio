@@ -2,7 +2,7 @@ import { useRef, useState, useEffect, useMemo, useCallback, memo } from 'react';
 import { useFrame, useThree, useLoader } from '@react-three/fiber';
 import * as THREE from 'three';
 import gsap from 'gsap';
-import { CONTENT_DATA, PLATFORM_CONFIG, DEVICE_COLORS, getLatestContent } from './contentData';
+import { CONTENT_DATA, PLATFORM_CONFIG, DEVICE_COLORS } from './contentData';
 import { useScene } from '../../../../context/SceneContext';
 import { useAchievements } from '../../../../context/AchievementsContext';
 import { TextureLoader } from 'three';
@@ -127,7 +127,7 @@ const StudioRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
     // ===== PAINT TRANSITION (top-to-bottom) =====
     const { onBeforeCompile: paintOnBeforeCompile, animatePaint, resetPaint, uniformsData: paintUniforms, updateRoomOrigin } = usePaintMaterial(STUDIO_PAINT_CONFIG);
 
-    const [isTransitioning, setIsTransitioning] = useState(false);
+    const [, setIsTransitioning] = useState(false);
 
     const wasTeleportedRef = useRef(false);
     useEffect(() => {
@@ -194,7 +194,7 @@ const StudioRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
 
         // Shuffle content for mixed appearance (seeded for consistency)
         let shuffledContent = [...activeContent].sort(() => 0.5 - Math.random());
-        
+
         // Ensure the tower is extremely tall (at least 12 rings = 48 items)
         // so that the teleportation boundaries are far outside the camera's view.
         if (shuffledContent.length > 0) {
@@ -630,7 +630,7 @@ const MonitorBlock = memo(({ item, meshRef, isSelected, onMonitorClick, disabled
                 '/textures/studio/phone_front.webp'
     );
 
-    // Dynamic Dummy texture for touch devices 
+    // Dynamic Dummy texture for touch devices
     const isTouch = isTouchDevice();
     const dummyTex = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 

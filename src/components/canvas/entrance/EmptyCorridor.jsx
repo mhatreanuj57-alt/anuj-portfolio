@@ -5,7 +5,7 @@ import { useTexture } from '@react-three/drei';
 
 /**
  * EmptyCorridor Component
- * 
+ *
  * Simple corridor walls for loading phase.
  * No doors, no decorations, no ANUJ - just the corridor structure.
  * Used during preloader auto-scroll.
@@ -57,7 +57,7 @@ const EmptyCorridor = ({ camera }) => {
 /**
  * Single empty corridor segment
  */
-const CorridorSegmentEmpty = ({ zStart, corridorWidth, corridorHeight, floorTexture }) => {
+const CorridorSegmentEmpty = ({ zStart, corridorWidth, floorTexture }) => {
     const length = 40;
     const zCenter = zStart - length / 2;
 

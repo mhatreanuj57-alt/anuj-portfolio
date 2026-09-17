@@ -124,18 +124,18 @@ if (scrubVideo && window.matchMedia('(hover: hover)').matches) {
   const updateVideo = () => {
     // Używamy wyższego współczynnika (0.4 zamiast 0.1), aby reagowało natychmiast, zachowując minimalne wygładzenie
     currentTime += (targetTime - currentTime) * 0.4;
-    
+
     // Jeśli jesteśmy wystarczająco blisko, wyrównujemy i zatrzymujemy pętlę
     if (Math.abs(targetTime - currentTime) > 0.01) {
       if (isMetadataLoaded || scrubVideo.readyState >= 1) {
         try {
           scrubVideo.currentTime = currentTime;
-        } catch (e) {}
+        } catch { /* Metadata may not be ready yet. */ }
       }
       rafId = requestAnimationFrame(updateVideo);
     } else {
       // Wyrównanie do celu na sam koniec
-      try { scrubVideo.currentTime = targetTime; } catch(e){}
+      try { scrubVideo.currentTime = targetTime; } catch { /* Metadata may not be ready yet. */ }
       currentTime = targetTime;
       rafId = null;
     }
@@ -144,7 +144,7 @@ if (scrubVideo && window.matchMedia('(hover: hover)').matches) {
   const handleMouseMove = (event) => {
     // Disable on touch devices or if reduced motion is enabled
     if (reducedMotion.matches || event.pointerType === 'touch') return;
-    
+
     const yPos = Math.max(0, Math.min(1, event.clientY / window.innerHeight));
     if (scrubVideo.duration && !isNaN(scrubVideo.duration)) {
       targetTime = yPos * scrubVideo.duration;
@@ -153,4 +153,11 @@ if (scrubVideo && window.matchMedia('(hover: hover)').matches) {
   };
 
   window.addEventListener('pointermove', handleMouseMove, { passive: true });
+  const stopScrubbing = () => {
+    if (rafId !== null) cancelAnimationFrame(rafId);
+    rafId = null;
+    targetTime = currentTime;
+  };
+  reducedMotion.addEventListener('change', stopScrubbing);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) stopScrubbing(); });
 }

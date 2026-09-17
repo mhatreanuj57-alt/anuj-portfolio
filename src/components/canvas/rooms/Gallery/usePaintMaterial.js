@@ -1,15 +1,15 @@
-import { useMemo, useRef, useEffect } from 'react';
+import { useMemo } from 'react';
 import * as THREE from 'three';
 import gsap from 'gsap';
 
 /**
  * usePaintMaterial
  * Exposes a ref to the material and handles compiling the noise-based transition effect.
- * 
+ *
  * Uses uRoomOrigin to make the reveal effect position-independent:
  * the shader works relative to the room's origin, not absolute world coordinates.
  * This fixes the paint animation not working in far corridor chunks.
- * 
+ *
  * Options:
  *   dirX, dirY, dirZ  — reveal direction vector (default: -1, 0, 0.1 for Gallery left-side rooms)
  *   startDist, endDist — range mapping for the reveal progress
@@ -95,13 +95,13 @@ export const usePaintMaterial = (options = {}) => {
             vec3 revealDir = normalize(vec3(${dirX.toFixed(1)}, ${dirY.toFixed(1)}, ${dirZ.toFixed(1)}));
 
             // Mapowanie postępu na odległość wzdłuż wektora
-            float startDist = ${startDist.toFixed(1)}; 
+            float startDist = ${startDist.toFixed(1)};
             float endDist = ${endDist.toFixed(1)};
             float targetDist = mix(startDist, endDist, uPaintProgress);
-            
+
             // Odległość pixela wzdłuż wybranego kierunku (relative to room origin)
             float distFromPlane = targetDist - dot(localPos, revealDir);
-            
+
             // Szum — noise sampling axes configured per room
             float n = paintNoise(${noiseComponent1} * 2.0) * 2.0;
             float n2 = paintNoise(${noiseComponent2} * 8.0) * 0.5;
@@ -117,7 +117,7 @@ export const usePaintMaterial = (options = {}) => {
 
             // Create a glowing "wet paint" edge
             float glow = smoothstep(2.0, 0.0, boundary);
-            
+
             // Brighten edge to look like fresh digital paint
             if (uPaintProgress < 0.999 && boundary < 2.0) {
                 gl_FragColor.rgb += vec3(glow * 0.4, glow * 0.5, glow * 0.7);

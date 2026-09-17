@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
+import { readPreference, writePreference } from '../utils/storage';
 
 const AudioContext = createContext({
     isMuted: false,
@@ -15,14 +16,14 @@ export const useAudio = () => useContext(AudioContext);
 export const AudioProvider = ({ children }) => {
     // Persist mute preference
     const [isMuted, setIsMuted] = useState(() => {
-        const saved = localStorage.getItem('audio_muted');
+        const saved = readPreference('audio_muted');
         return saved === 'true';
     });
 
     // Persist volume preference (0.0 to 1.0)
     const [globalVolume, setGlobalVolume] = useState(() => {
-        const saved = localStorage.getItem('audio_volume');
-        return saved !== null ? parseFloat(saved) : 0.5;
+        const saved = Number.parseFloat(readPreference('audio_volume'));
+        return Number.isFinite(saved) ? Math.max(0, Math.min(1, saved)) : 0.5;
     });
 
     const [audioEnabled, setAudioEnabled] = useState(false);
@@ -31,8 +32,8 @@ export const AudioProvider = ({ children }) => {
     const activeSounds = useRef({});
 
     useEffect(() => {
-        localStorage.setItem('audio_muted', isMuted);
-        localStorage.setItem('audio_volume', globalVolume);
+        writePreference('audio_muted', isMuted);
+        writePreference('audio_volume', globalVolume);
 
         // Update all active sounds
         Object.values(activeSounds.current).forEach(audio => {
@@ -68,8 +69,8 @@ export const AudioProvider = ({ children }) => {
     const enableAudio = useCallback(() => {
         if (!audioEnabled) {
             // Create a dummy context or just flip the switch to say "we tried"
-            // Real web audio unlock usually needs a context resume, 
-            // but for HTML5 Audio elements, just a user interaction event is enough 
+            // Real web audio unlock usually needs a context resume,
+            // but for HTML5 Audio elements, just a user interaction event is enough
             // to "bless" the document for subsequent plays.
             setAudioEnabled(true);
         }
@@ -130,7 +131,7 @@ export const AudioProvider = ({ children }) => {
                 audio.currentTime = 0;
                 delete activeSounds.current[soundName];
             },
-            fade: (duration = 1000) => {
+            fade: () => {
                 // For now just stop
                 audio.pause();
                 delete activeSounds.current[soundName];

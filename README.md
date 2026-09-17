@@ -35,20 +35,26 @@ An immersive 3D portfolio where visitors physically walk through a corridor and 
 | UI | React 19 + Custom SCSS |
 | Shaders | Custom GLSL (reveal, paint, fog) |
 | CMS | Sanity (disabled, fallback projects) |
-| AI | OpenRouter API (carousel generation) |
+| AI | Groq with Gemini fallback (carousel generation) |
 | Deploy | Vercel |
 | Language | JavaScript (no TypeScript) |
 
 ## Quick Start
 
 ```bash
-git clone https://github.com/a18-n03/anuj-portfolio-V2.git
+git clone https://github.com/anu-mhatre-1812/anuj-portfolio-V2.git
 cd anuj-portfolio-V2
 npm install
 npm run dev
 ```
 
 Open [http://localhost:5173](http://localhost:5173)
+
+Copy `.env.example` to `.env.local` and configure a Groq or Gemini key to test AI generation locally. The same handler runs locally and on Vercel. Provider secrets must never use the `VITE_` prefix. Existing production variables are managed in Vercel.
+
+`VITE_WEB3FORMS_KEY` is optional: without it, the contact form opens a prefilled email draft and asks visitors to finish sending in their email app. The lightweight `/start` page works without JavaScript or WebGL.
+
+Validation: `npm test`, `npm run audit:assets`, `npm run lint`, and `npm run build`. Compiler and Fast Refresh migration diagnostics remain warnings; React Compiler is not enabled for this Three.js/GSAP application.
 
 ## Build & Deploy
 
@@ -91,7 +97,7 @@ public/               # Static assets (textures, fonts, models)
 ## Author
 
 **Anuj Mhatre**
-- GitHub: [@a18-n03](https://github.com/a18-n03)
+- GitHub: [@anu-mhatre-1812](https://github.com/anu-mhatre-1812)
 - LinkedIn: [anuj-mhatre-031807ma](https://www.linkedin.com/in/anuj-mhatre-031807ma)
 - X: [@MhatreAnuj1814](https://x.com/MhatreAnuj1814)
 - Instagram: [@anu__m.1812](https://www.instagram.com/anu__m.1812)

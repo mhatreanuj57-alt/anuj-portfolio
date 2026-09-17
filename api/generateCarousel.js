@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Cache-Control', 'no-store');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
@@ -7,7 +7,9 @@ export default async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
     const { prompt, slideCount: reqCount = 5, mode = 'generate', answers } = req.body || {};
-    if (!prompt || typeof prompt !== 'string') return res.status(400).json({ error: 'Missing prompt' });
+    if (typeof prompt !== 'string' || !prompt.trim()) return res.status(400).json({ error: 'Missing prompt' });
+    if (prompt.length > 4000 || JSON.stringify(answers ?? null).length > 8000) return res.status(400).json({ error: 'Prompt or answers are too long' });
+    if (!['generate', 'questions'].includes(mode)) return res.status(400).json({ error: 'Invalid generation mode' });
 
     const slideCount = Math.min(50, Math.max(2, parseInt(reqCount, 10) || 5));
     const maxTokens = mode === 'questions' ? 2000 : Math.min(32768, Math.max(8192, slideCount * 1000));
@@ -67,7 +69,7 @@ VARY fonts between heading fonts (Cabin Sketch, Rubik Scribble) and body fonts (
     const activeMessage = mode === 'questions' ? questionsMessage : (answers ? `${userMessage}\n\nUser's answers to your questions:\n${JSON.stringify(answers, null, 2)}\n\nUse these answers to tailor the content. Write in the chosen tone, for the chosen audience, with the chosen goal and style.` : userMessage);
 
     const providers = [
-        {
+        ...(process.env.GROQ_API_KEY ? [{
             name: 'Groq',
             url: 'https://api.groq.com/openai/v1/chat/completions',
             model: 'openai/gpt-oss-120b',
@@ -83,49 +85,40 @@ VARY fonts between heading fonts (Cabin Sketch, Rubik Scribble) and body fonts (
                 ],
                 temperature: 0.75,
                 max_tokens: tokens,
+                response_format: { type: 'json_object' },
             }),
             extractContent: (data) => data.choices?.[0]?.message?.content,
-        },
+        }] : []),
         ...[
             { key: process.env.GEMINI_API_KEY, name: 'Gemini Key 1' },
             { key: process.env.GEMINI_API_KEY_2, name: 'Gemini Key 2' },
         ].filter(k => k.key).map(({ key, name }) => ({
             name,
-            url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${key}`,
-            model: 'gemini-3.6-flash',
-            headers: { 'Content-Type': 'application/json' },
+            url: `https://generativelanguage.googleapis.com/v1beta/models/${process.env.GEMINI_MODEL || 'gemini-2.5-flash'}:generateContent`,
+            headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
             buildBody: (msg, tokens) => JSON.stringify({
                 contents: [{ role: 'user', parts: [{ text: msg }] }],
                 systemInstruction: { parts: [{ text: 'You are a world-class content strategist and copywriter. You create viral carousel content that educates, entertains, and converts. Write with authority, use specific data and examples, and make every word count. Never be generic — be specific, bold, and memorable.' }] },
-                generationConfig: { temperature: 0.75, maxOutputTokens: tokens },
+                generationConfig: { temperature: 0.75, maxOutputTokens: tokens, responseMimeType: 'application/json' },
             }),
             extractContent: (data) => data.candidates?.[0]?.content?.parts?.[0]?.text,
         })),
     ];
 
-    const MAX_RETRIES = 2;
+    if (!providers.length) return res.status(503).json({ error: 'AI generation is not configured. Please try again later.' });
+    const MAX_RETRIES = 1;
 
     for (const provider of providers) {
-        if (!provider.headers['Authorization'] && !provider.url.includes('key=')) continue;
-
         for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
             try {
-                const controller = new AbortController();
-                const timeout = setTimeout(() => controller.abort(), 30000);
-
                 const response = await fetch(provider.url, {
                     method: 'POST',
                     headers: provider.headers,
                     body: provider.buildBody(activeMessage, maxTokens),
-                    signal: controller.signal,
+                    signal: AbortSignal.timeout(30000),
                 });
 
-                clearTimeout(timeout);
-
                 if (response.status === 429 || response.status === 503) {
-                    const waitMs = (attempt + 1) * 3000;
-                    console.warn(`${provider.name} ${response.status} — waiting ${waitMs}ms`);
-                    await new Promise(r => setTimeout(r, waitMs));
                     continue;
                 }
 
@@ -153,29 +146,32 @@ VARY fonts between heading fonts (Cabin Sketch, Rubik Scribble) and body fonts (
                 let parsed;
                 try {
                     parsed = JSON.parse(clean);
-                } catch (e) {
+                } catch {
                     const start = clean.indexOf('{');
                     if (start === -1) break;
-                    let depth = 0, end = -1;
-                    for (let i = start; i < clean.length; i++) {
-                        if (clean[i] === '{') depth++;
-                        else if (clean[i] === '}') { depth--; if (depth === 0) { end = i; break; } }
-                    }
+                    const end = clean.lastIndexOf('}');
                     if (end === -1) break;
                     parsed = JSON.parse(clean.substring(start, end + 1));
                 }
 
-                if (parsed && !Array.isArray(parsed.slides) && typeof parsed.slides === 'object') {
+                if (mode === 'questions') {
+                    if (!Array.isArray(parsed?.questions) || parsed.questions.length < 3 || parsed.questions.length > 5) break;
+                    if (!parsed.questions.every(q => q && typeof q.question === 'string' && Array.isArray(q.options) && q.options.length >= 3 && q.options.length <= 4 && q.options.every(o => typeof o === 'string'))) break;
+                    return res.status(200).json({ questions: parsed.questions.map((q, i) => ({ ...q, id: i + 1 })) });
+                }
+
+                if (parsed?.slides && !Array.isArray(parsed.slides) && typeof parsed.slides === 'object') {
                     parsed.slides = [parsed.slides];
                 }
 
-                if (!parsed.slides || !Array.isArray(parsed.slides) || parsed.slides.length === 0) break;
+                if (!Array.isArray(parsed?.slides) || parsed.slides.length !== slideCount) break;
+                if (!parsed.slides.every(s => s && typeof s.title === 'string' && typeof s.content === 'string' && (!s.bullets || (Array.isArray(s.bullets) && s.bullets.every(b => typeof b === 'string'))))) break;
 
                 console.log(`${provider.name}: SUCCESS — ${parsed.slides.length} slides`);
                 return res.status(200).json(parsed);
 
             } catch (err) {
-                console.error(`${provider.name} attempt ${attempt + 1}: ${err.message}`);
+                console.error(`${provider.name} attempt ${attempt + 1}: ${err.name}`);
                 if (err.name !== 'AbortError') break;
             }
         }

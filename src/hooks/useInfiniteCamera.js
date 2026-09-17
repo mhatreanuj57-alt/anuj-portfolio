@@ -17,7 +17,7 @@ const DOOR_POSITIONS = [
 
 /**
  * useInfiniteCamera Hook
- * 
+ *
  * When disabled: does NOT touch camera at all (GSAP can control it)
  * When enabled: takes over camera control with scroll/parallax
  * Supports: desktop (mouse/wheel) + mobile (touch/gyroscope)
@@ -239,7 +239,7 @@ const useInfiniteCamera = ({
                     useGyroscope.current = true;
                     window.addEventListener('deviceorientation', handleDeviceOrientation);
                 }
-            } catch (error) {
+            } catch {
                 // console.log('Gyroscope permission denied');
             }
         } else {

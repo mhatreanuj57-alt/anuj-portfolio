@@ -1,5 +1,5 @@
-import { useState, Suspense, useEffect, useCallback, useLayoutEffect, lazy } from 'react';
-import { Canvas, useThree, useFrame, useLoader } from '@react-three/fiber';
+import { useState, Suspense, useEffect, useCallback, lazy } from 'react';
+import { Canvas, useThree, useLoader } from '@react-three/fiber';
 import { Preload, useTexture, Text, PerformanceMonitor } from '@react-three/drei';
 import * as THREE from 'three';
 
@@ -12,6 +12,7 @@ import { SceneProvider, useScene } from './context/SceneContext';
 import NavigationUI from './components/ui/NavigationUI';
 import GlobalOverlay from './components/ui/GlobalOverlay';
 import ScreenReaderOverlay from './components/ui/ScreenReaderOverlay';
+import { ExperienceFallback } from './components/ui/ExperienceBoundary';
 import { useDocumentMeta } from './hooks/useDocumentMeta';
 import posthog from 'posthog-js';
 import { loadSanityData } from './hooks/useSanityData';
@@ -33,11 +34,11 @@ import './styles/main.scss';
 // --- CONDITIONAL ASSET PRELOADING ---
 // On high-end devices, preloads everything for zero stutter.
 // On mobile/low-end devices, only preloads core textures to prevent Out Of Memory crashes.
-import { 
-  ENTRANCE_TEXTURES, 
-  CORRIDOR_TEXTURES, 
+import {
+  ENTRANCE_TEXTURES,
+  CORRIDOR_TEXTURES,
   UI_TEXTURES,
-  PRELOAD_ALL, 
+  PRELOAD_ALL,
   PRELOAD_LOADER,
   ABOUT_TEXTURES,
   IMAGE_ASSETS,
@@ -73,7 +74,7 @@ if (isLowEnd) {
 } else {
   const filteredAll = filterTexturesByDevice(PRELOAD_ALL, supportsHover);
   const filteredLoader = filterTexturesByDevice(PRELOAD_LOADER, supportsHover);
-  
+
   filteredAll.forEach(path => useTexture.preload(path));
   filteredLoader.forEach(path => useLoader.preload(TextureLoader, path));
 }
@@ -118,6 +119,7 @@ const GradientSkyBackground = () => {
 
     return () => {
       scene.background = null;
+      texture.dispose();
     };
   }, [scene]);
 
@@ -146,14 +148,16 @@ const PaperSceneBackground = () => {
 function DocumentMetaBridge() {
   useDocumentMeta();
 
-  const { initialRoom, deeplinkHandled, hasEntered, teleportTo, markEntered } = useScene();
+  const { initialRoom, deeplinkHandled, hasEntered, teleportTo } = useScene();
 
   // Deep linking: if user lands on e.g. /gallery, auto-teleport after scene loads
   useEffect(() => {
     if (initialRoom && hasEntered && !deeplinkHandled.current) {
-      deeplinkHandled.current = true;
       // Small delay to let the corridor render first
-      const timer = setTimeout(() => teleportTo(initialRoom), 300);
+      const timer = setTimeout(() => {
+        deeplinkHandled.current = true;
+        teleportTo(initialRoom);
+      }, 300);
       return () => clearTimeout(timer);
     }
   }, [initialRoom, hasEntered, teleportTo, deeplinkHandled]);
@@ -188,6 +192,7 @@ function AppContent() {
           {/* Full screen 3D Canvas */}
           <div className="canvas-wrapper">
             <Canvas
+              fallback={<ExperienceFallback />}
               camera={{
                 position: [0, 0.2, 28],
                 fov: 60,
@@ -239,6 +244,7 @@ function AppContent() {
           )}
 
           {/* 2D Preloader */}
+          <a className="lightweight-link" href="/start">Prefer a simple page?</a>
           <Preloader
             ready={sceneReady}
             onComplete={() => setIsLoaded(true)}
@@ -252,6 +258,17 @@ function AppContent() {
 import { AchievementsProvider } from './context/AchievementsContext';
 
 export default function App() {
+  const [supportsWebGL] = useState(() => {
+    try {
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('webgl2');
+      if (!context) return false;
+      context.getExtension('WEBGL_lose_context')?.loseContext();
+      return true;
+    } catch {
+      return false;
+    }
+  });
   // Preload browser-based images (for standard <img> tags) immediately upon mounting App
   // This ensures they are in the network waterfall during the initial loading phase.
   useEffect(() => {
@@ -262,6 +279,8 @@ export default function App() {
     // console.log(`[Preload] Triggering browser-level image preloads for ${filteredImages.length} assets.`);
     filteredImages.forEach(path => preloadBrowserImage(path));
   }, []);
+
+  if (!supportsWebGL) return <ExperienceFallback />;
 
   return (
     <PerformanceProvider>

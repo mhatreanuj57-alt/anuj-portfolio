@@ -1,5 +1,5 @@
 import { useRef, useMemo } from 'react';
-import { useFrame, useThree } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
 import { Text } from '@react-three/drei';
 import * as THREE from 'three';
 
@@ -8,7 +8,7 @@ const _worldPos = new THREE.Vector3();
 
 /**
  * StoryMilestone Component
- * 
+ *
  * A story section that appears in the sky during flight.
  * Fades in as you approach, fades out as you pass through.
  * Objects move TO camera (camera stays at z=0).

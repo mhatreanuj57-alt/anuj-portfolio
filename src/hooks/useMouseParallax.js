@@ -1,10 +1,10 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect } from 'react';
 import { useThree, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
 /**
  * useMouseParallax Hook
- * 
+ *
  * Camera follows mouse movement - creates "looking around the room" effect.
  * Mouse right = camera right, Mouse up = camera up.
  */

@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { useThree } from "@react-three/fiber";
+
 
 // Performance Tiers
 export const TIERS = {
@@ -74,7 +74,7 @@ export const PerformanceProvider = ({ children }) => {
       if (navigator.deviceMemory && navigator.deviceMemory <= 4) {
         detectedTier = TIERS.LOW;
       }
-      
+
       // Removed small screen heuristic because modern phones have CSS width < 430px (e.g. iPhone 15 Pro Max is 430px)
 
       // console.log(

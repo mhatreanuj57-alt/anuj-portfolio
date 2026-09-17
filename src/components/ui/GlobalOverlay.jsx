@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useRef, useCallback, lazy, Suspense } from 'react';
 import { useScene } from '../../context/SceneContext';
 import gsap from 'gsap';
 import { TextPlugin } from 'gsap/TextPlugin';
 import BadgeSphereCanvas from './BadgeSphereCanvas';
-import CarouselEditor from './CarouselEditor';
+const CarouselEditor = lazy(() => import('./CarouselEditor'));
 import '../../styles/GlobalOverlay.scss';
 
 gsap.registerPlugin(TextPlugin);
@@ -57,7 +57,7 @@ const GlobalOverlay = () => {
     // Don't render anything when there's nothing to show
     if (!isVisible && !overlayContent && !cachedContent) return null;
 
-    // DUMMY RENDER MOCK - Pre-render the heaviest layout (certificate_grid) invisibly 
+    // DUMMY RENDER MOCK - Pre-render the heaviest layout (certificate_grid) invisibly
     // to calculate CSS layout costs on page load, NOT on first click.
     const dummyGridContent = {
         title: 'Loading...',
@@ -78,9 +78,35 @@ const GlobalOverlay = () => {
 };
 
 const ContentCard = ({ content, isOpen, onClose, onExitRoom, isMobile }) => {
-    if (!content) return null;
-
     const label = content.platformConfig?.label || 'Content';
+    const dialogRef = useRef(null);
+    useEffect(() => {
+        if (!isOpen) return;
+        const previous = document.activeElement;
+        const dialog = dialogRef.current;
+        const getControls = () => [...dialog.querySelectorAll('button, a[href], input, textarea, select, [tabindex="0"]')].filter(el => !el.disabled && el.getClientRects().length);
+        const frame = requestAnimationFrame(() => (getControls()[0] || dialog)?.focus());
+        const handleKey = event => {
+            if (event.key === 'Escape') {
+                event.preventDefault();
+                onClose();
+                if (content.layout === 'carousel_editor') onExitRoom?.();
+            }
+            if (event.key === 'Tab') {
+                const controls = getControls();
+                const first = controls[0], last = controls.at(-1);
+                if (!first) { event.preventDefault(); dialog.focus(); }
+                else if (event.shiftKey && (document.activeElement === first || document.activeElement === dialog)) { event.preventDefault(); last.focus(); }
+                else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+            }
+        };
+        dialog.addEventListener('keydown', handleKey);
+        return () => {
+            cancelAnimationFrame(frame);
+            dialog.removeEventListener('keydown', handleKey);
+            if (previous?.isConnected) previous.focus();
+        };
+    }, [isOpen, onClose, onExitRoom, content.layout]);
 
     // GSAP TextPlugin typing effect for description
     const descriptionRef = useRef(null);
@@ -89,11 +115,11 @@ const ContentCard = ({ content, isOpen, onClose, onExitRoom, isMobile }) => {
             gsap.killTweensOf(descriptionRef.current);
             gsap.fromTo(descriptionRef.current,
                 { text: "" },
-                { 
-                    text: content.description, 
-                    duration: Math.min(2.5, content.description.length * 0.015), 
-                    ease: "none", 
-                    delay: 0.3 
+                {
+                    text: content.description,
+                    duration: Math.min(2.5, content.description.length * 0.015),
+                    ease: "none",
+                    delay: 0.3
                 }
             );
         }
@@ -270,6 +296,7 @@ const ContentCard = ({ content, isOpen, onClose, onExitRoom, isMobile }) => {
         return (
             <div
                 className="global-overlay-wrapper"
+                ref={dialogRef} role="dialog" aria-modal="true" aria-label="Carousel editor" tabIndex={-1} inert={!isOpen}
                 style={{
                     position: 'fixed',
                     top: 0,
@@ -282,7 +309,7 @@ const ContentCard = ({ content, isOpen, onClose, onExitRoom, isMobile }) => {
                     transition: 'opacity 0.3s ease',
                 }}
             >
-                {isOpen && <CarouselEditor onClose={handleCarouselClose} />}
+                {isOpen && <Suspense fallback={<p role="status" style={{ padding: 32, background: '#f4f1e9' }}>Loading carousel editor…</p>}><CarouselEditor onClose={handleCarouselClose} /></Suspense>}
             </div>
         );
     }
@@ -290,6 +317,7 @@ const ContentCard = ({ content, isOpen, onClose, onExitRoom, isMobile }) => {
     return (
         <div
             className="global-overlay-wrapper"
+            ref={dialogRef} role="dialog" aria-modal="true" aria-label={content.title || label} tabIndex={-1} inert={!isOpen}
             style={{
                 position: 'fixed',
                 top: 0,
@@ -298,7 +326,7 @@ const ContentCard = ({ content, isOpen, onClose, onExitRoom, isMobile }) => {
                 height: '100vh',
                 zIndex: 2000,
                 pointerEvents: isOpen ? 'auto' : 'none',
-                // Important: Wrapper itself has NO background and NO mask. 
+                // Important: Wrapper itself has NO background and NO mask.
                 // It just holds the layers.
             }}
             onClick={handleBackdropClick}
@@ -564,7 +592,7 @@ const ContentCard = ({ content, isOpen, onClose, onExitRoom, isMobile }) => {
                             </div>
 
                             {/* Description */}
-                            <p 
+                            <p
                                 ref={descriptionRef}
                                 style={{
                                 lineHeight: 1.6,

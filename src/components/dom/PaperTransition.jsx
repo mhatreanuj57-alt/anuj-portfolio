@@ -6,7 +6,7 @@ import '../../styles/Preloader.scss'; // Reuse preloader styles
 
 /**
  * PaperTransition - Reusable paper tear transition for teleportation
- * 
+ *
  * Listens to SceneContext teleportPhase:
  * - 'closing': Paper halves slide together (reverse of tear)
  * - 'teleporting': Paper is closed, waiting for destination load
@@ -36,8 +36,7 @@ const PaperTransition = () => {
     const {
         teleportPhase,
         startTeleportTransition,
-        finishPaperOpen,
-        teleportTarget
+        finishPaperOpen
     } = useScene();
     const { play } = useAudio();
 
@@ -171,7 +170,7 @@ const PaperTransition = () => {
         };
     }, [teleportPhase, startTeleportTransition, finishPaperOpen, play]);
 
-    // Zostawiamy komponent cały czas w DOM (bez "return null"), 
+    // Zostawiamy komponent cały czas w DOM (bez "return null"),
     // żeby uniknąć laga pierwszego załadowania skomplikowanych ścieżek SVG.
     // if (!teleportPhase) return null;
 

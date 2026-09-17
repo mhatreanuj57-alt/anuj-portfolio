@@ -11,12 +11,12 @@ import { isSanityDataLoaded } from '../../../hooks/useSanityData';
 
 /**
  * RoomWarmup Component
- * 
+ *
  * Mounts all 4 rooms off-screen during the preloader phase to force
  * shader compilation and texture upload to GPU. After a few frames,
  * it unmounts the rooms to free memory. This ensures the first room
  * entry has zero shader compilation stutter.
- * 
+ *
  * Positioned 500 units below the scene so nothing is visible.
  * Audio components won't be audible at this distance.
  */
@@ -27,7 +27,7 @@ const RoomWarmup = ({ onWarmupComplete, isLowTier }) => {
     const { gl, scene, camera } = useThree();
 
     // Wait for rooms to render a few frames, then compile and unmount
-    const warmupStart = useRef(performance.now());
+
 
     useFrame(() => {
         if (isDone || completeFired.current) return;
@@ -44,9 +44,9 @@ const RoomWarmup = ({ onWarmupComplete, isLowTier }) => {
             completeFired.current = true;
 
             const finishWarmup = () => {
-                const warmupDuration = ((performance.now() - warmupStart.current) / 1000).toFixed(2);
+
                 // console.info(`🔥 GPU/Shader Warmup Complete: ${warmupDuration}s ${isLowTier ? '(Bypassed for LOW tier)' : ''}`);
-                
+
                 requestAnimationFrame(() => {
                     setIsDone(true);
                     onWarmupComplete?.();

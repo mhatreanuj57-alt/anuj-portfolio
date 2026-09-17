@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
+import ExperienceBoundary from './components/ui/ExperienceBoundary.jsx'
 
 // --- Console Signature ---
 if (typeof window !== 'undefined') {
@@ -13,8 +14,10 @@ if (typeof window !== 'undefined') {
 }
 
 
+// The live accessible UI replaces the static no-JavaScript content.
+document.getElementById('seo-content')?.setAttribute('inert', '');
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <App />
+    <ExperienceBoundary><App /></ExperienceBoundary>
   </StrictMode>,
 )

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react';
+import React, { useState, useRef, useCallback, useMemo } from 'react';
 import { toPng } from 'html-to-image';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
@@ -1003,7 +1003,6 @@ const CarouselEditor = ({ onClose }) => {
     const [dragIndex, setDragIndex] = useState(null);
     const [selectedElementId, setSelectedElementId] = useState(null);
     const [showGrid, setShowGrid] = useState(false);
-    const [editingBranding, setEditingBranding] = useState(false);
 
     const canvasRefs = useRef({});
     const previewRef = useRef(null);
@@ -1209,11 +1208,12 @@ const CarouselEditor = ({ onClose }) => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ prompt, slideCount, mode: 'questions' }),
+                signal: AbortSignal.timeout(100000),
             });
             if (!response.ok) throw new Error('Failed to get questions');
             const data = await response.json();
             setMcqQuestions(data.questions || []);
-        } catch (err) {
+        } catch {
             // If questions fail, go straight to generate
             setGenerateError(null);
             setIsAskingQuestions(false);

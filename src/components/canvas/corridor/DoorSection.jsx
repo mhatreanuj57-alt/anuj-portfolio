@@ -6,7 +6,7 @@ import gsap from 'gsap';
 import RoomInterior from './RoomInterior';
 import '../shaders/RevealMaterial'; // Registers alpha-discard reveal shader
 import { useScene } from '../../../context/SceneContext';
-import { useAchievements } from '../../../context/AchievementsContext';
+
 import { useAudio } from '../../../context/AudioManager';
 import { isTouchDevice } from '../../../utils/deviceDetect';
 
@@ -58,7 +58,7 @@ const DOOR_PAINTED_TEXTURES = {
 
 /**
  * DoorSection Component
- * 
+ *
  * Groups the angled wall + door + label as one unit.
  * Uses 2D textures for door, frame, and handle (like entrance doors).
  * Pivots from the OUTER edge (where wall connects to corridor).
@@ -68,10 +68,8 @@ const DoorSection = ({
     position, // [x, y, z] - center of the wall segment
     side = 'left',
     label,
-    roomId, // ID for context updates (gallery, studio, etc)
-    icon,
+    roomId,
     onEnter,
-    autoCloseDelay = 3000,
     enterDistance = 8, // Default fly-through distance
     setCameraOverride, // Function to take control of camera from hook
     segmentIndex
@@ -91,7 +89,7 @@ const DoorSection = ({
     const [isInsideRoom, setIsInsideRoom] = useState(false);
     const [isTiltLocked, setIsTiltLocked] = useState(false); // Lock tilt when entering room
     const [shouldRenderRoom, setShouldRenderRoom] = useState(false); // Lazy loading state
-    const [roomReady, setRoomReady] = useState(false); // Room signaled it's ready
+    const [, setRoomReady] = useState(false); // Room signaled it's ready
     const { camera } = useThree();
     const closeTimerRef = useRef(null);
     const loadTimeoutRef = useRef(null); // Ref for the room loading fallback timeout
@@ -100,7 +98,6 @@ const DoorSection = ({
     const {
         currentRoom, // We need to know if the global room changed (teleportation)
         exitRequested,
-        clearExitRequest,
         exitRoom: contextExitRoom,
         enterRoom,
         pendingDoorClick,
@@ -110,7 +107,7 @@ const DoorSection = ({
         teleportPhase // We need this to delay reset until curtain is closed
     } = useScene();
 
-    const { unlockAchievement } = useAchievements();
+
     const { globalVolume, isMuted } = useAudio();
 
     // Audio Refs for 3D positional sound
@@ -165,8 +162,8 @@ const DoorSection = ({
             if (doorRef.current) doorRef.current.rotation.y = 0;
             if (handleRef.current) handleRef.current.rotation.z = 0;
 
-            // 3. Reset Camera Override 
-            // Important: DO NOT RELEASE control here. 
+            // 3. Reset Camera Override
+            // Important: DO NOT RELEASE control here.
             // Experience.jsx manages the override during "isTeleporting".
             // If we release it here, useInfiniteCamera takes over before the new room is ready.
             // setCameraOverride?.(false); <--- REMOVED
@@ -182,7 +179,7 @@ const DoorSection = ({
     const savedCameraState = useRef({ x: 0, y: 0, z: 0, rotationX: 0, rotationY: 0, rotationZ: 0 });
     // Save position ALIGNED with door (intermediate step for exit)
     const doorAlignedState = useRef({ x: 0, y: 0, z: 0, rotationY: 0 });
-    // Save position after flying through corridor (before final rotation) 
+    // Save position after flying through corridor (before final rotation)
     const roomEntryState = useRef({ x: 0, y: 0, z: 0, rotationY: 0 });
 
     // Dynamic tilt state
@@ -747,8 +744,8 @@ const DoorSection = ({
         if (exitRequested && isInsideRoom && !isAnimating) {
             // Note: We deliberately do NOT call clearExitRequest() here.
             // Calling it triggers an immediate global React Context update exactly
-            // when we want to start a 60 FPS GSAP animation. 
-            // setExitRequested(false) will be handled safely at the end of the 
+            // when we want to start a 60 FPS GSAP animation.
+            // setExitRequested(false) will be handled safely at the end of the
             // animation by contextExitRoom().
             exitRoom(); // Trigger the exit animation
         }
@@ -827,7 +824,7 @@ const DoorSection = ({
         if (hoverAudioRef.current && !isHovered) {
             const vol = isMuted ? 0 : DOOR_AUDIO_SETTINGS.hoverVolume * globalVolume;
             hoverAudioRef.current.setVolume(vol);
-            
+
             // Only play if AudioContext is already running to avoid console warnings
             // Browsers block audio until a user click, and hover is not always enough.
             if (hoverAudioRef.current.isPlaying) hoverAudioRef.current.stop();
@@ -934,13 +931,13 @@ const DoorSection = ({
     const doorMeshX = side === 'left' ? doorWidth / 2 : -doorWidth / 2;
 
     // Handle position on door (based on texture - handle is on the right side for left doors)
-    const handlePivotX = side === 'left' ? doorWidth * 0.25 : -doorWidth * 0.25;
+
 
     // Sign texture mapping - now uses a single empty sign texture
     const signTextureUrl = '/textures/corridor/pustatabliczka.webp';
-    const signLegacyRatio = 1.792; // 2752x1536
-    const signHeight = 0.55;
-    const signWidth = signHeight * signLegacyRatio;
+     // 2752x1536
+
+
     const signTexture = useTexture(signTextureUrl);
 
     return (
@@ -1048,7 +1045,7 @@ const DoorSection = ({
                 <group position={[wallOffsetX, -0.4, 0]}>
                     {/* === TEXTURED SIGN === */}
                     <group position={[0, doorHeight / 2 + 0.45, 0.08]}>
-                        {/* 
+                        {/*
                             WIELKOŚĆ TABLICZKI (SIGN SIZE):
                             Zmień liczby w args={[Szerokość, Wysokość]}
                             Obecnie: 1.3 szerokości, 0.65 wysokości

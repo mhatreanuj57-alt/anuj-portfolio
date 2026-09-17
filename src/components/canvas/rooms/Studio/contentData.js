@@ -1,6 +1,6 @@
 /**
  * Studio Content Data
- * 
+ *
  * Platforms: 'github', 'linkedin', 'x', 'discord', 'instagram', 'mail'
  */
 
@@ -86,7 +86,7 @@ const RAW_CONTENT_DATA = [
         title: 'agent-conductor',
         description: 'Multi-agent orchestrator — runs Codex CLI and OpenCode CLI simultaneously on isolated git worktrees.',
         thumbnail: null,
-        url: 'https://github.com/a18-n03/agent-conductor',
+        url: 'https://github.com/anu-mhatre-1812/agent-conductor',
         date: '2026-01-10',
     },
     {
@@ -104,7 +104,7 @@ const RAW_CONTENT_DATA = [
         title: 'draco-cli',
         description: 'Zero-login, terminal-first AI coding agent for the OpenCode Zen API.',
         thumbnail: null,
-        url: 'https://github.com/a18-n03/draco-cli',
+        url: 'https://github.com/anu-mhatre-1812/draco-cli',
         date: '2025-11-20',
     },
     {
@@ -113,7 +113,7 @@ const RAW_CONTENT_DATA = [
         title: 'dsa-tutor-rag',
         description: 'Advanced RAG over DSA notes — hybrid search, cross-encoder reranking, citations.',
         thumbnail: null,
-        url: 'https://github.com/a18-n03/dsa-tutor-rag',
+        url: 'https://github.com/anu-mhatre-1812/dsa-tutor-rag',
         date: '2025-10-28',
     },
 

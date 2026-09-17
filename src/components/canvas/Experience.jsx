@@ -1,5 +1,5 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
-import { useFrame, useThree } from '@react-three/fiber';
+import {  useCallback } from 'react';
+import {  useThree } from '@react-three/fiber';
 
 import InfiniteCorridorManager from './corridor/InfiniteCorridorManager';
 import EntranceDoors from './entrance/EntranceDoors';
@@ -19,15 +19,15 @@ const ENTRANCE_DOORS_Z = 22;
 
 /**
  * Experience Component
- * 
+ *
  * Flow:
  * 1. Preloader fades out -> user sees 3D entrance doors
  * 2. Click doors -> they open + camera flies through
  * 3. Behind doors: infinite corridor with ANUJ
  */
-const Experience = ({ isLoaded, onSceneReady, performanceTier }) => {
+const Experience = ({  onSceneReady, performanceTier }) => {
     // Use SceneContext for room state
-    const { hasEntered, markEntered, enterRoom, isTeleporting, isInRoom, pendingDoorClick } = useScene();
+    const { hasEntered, markEntered, enterRoom, isTeleporting, isInRoom } = useScene();
 
     const { camera } = useThree();
 
@@ -65,7 +65,7 @@ const Experience = ({ isLoaded, onSceneReady, performanceTier }) => {
     return (
         <>
             {/* === ROOM WARM-UP (pre-renders all rooms off-screen during preloader) === */}
-            {/* RoomWarmup mounts all 4 rooms 500 units below, compiles shaders via gl.compile(), 
+            {/* RoomWarmup mounts all 4 rooms 500 units below, compiles shaders via gl.compile(),
                 then self-destructs and signals onSceneReady. This ensures both corridor segments
                 AND room shaders are pre-compiled before the user starts interacting. */}
             <RoomWarmup onWarmupComplete={onSceneReady} isLowTier={isLowTier} />

@@ -10,7 +10,8 @@ export const ACHIEVEMENTS = {
     about_fly: { id: 'about_fly', label: 'Scroll to fly through my story', title: 'Sky Walker' },
     studio_interact: { id: 'studio_interact', label: 'Drag to rotate and browse', title: 'Director' },
     gallery_inspect: { id: 'gallery_inspect', label: 'Click project to inspect', title: 'Art Critic' },
-    contact_choose: { id: 'contact_choose', label: 'Find a contact method', title: 'Sociable' }
+    contact_choose: { id: 'contact_choose', label: 'Find a contact method', title: 'Sociable' },
+    hidden_gem: { id: 'hidden_gem', label: 'Find the secret sparkle in the corridor', title: 'Hidden Gem' }
 };
 
 export const AchievementsProvider = ({ children }) => {

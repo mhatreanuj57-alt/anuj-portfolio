@@ -238,6 +238,18 @@ const NavigationUI = () => {
             {/* Right side controls - Only visible after entering */}
             {hasEntered && (
                 <div className={`nav-controls ${isMenuOpen || isAudioMenuOpen ? 'menu-open' : ''} ${isUIHidden ? 'ui-hidden' : ''}`}>
+                    <a
+                        className="nav-btn resume-btn"
+                        href="/anuj-mhatre-cv.pdf"
+                        download="Anuj_Avinash_Mhatre_CV.pdf"
+                        aria-label="Download Anuj Mhatre CV"
+                        title="Download CV"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M7 3h7l4 4v14H7z" />
+                            <path d="M14 3v5h5M12 11v6m-3-3 3 3 3-3" />
+                        </svg>
+                    </a>
                     {/* Hamburger Menu Button */}
                     <button
                         className={`nav-btn hamburger-btn ${isMenuOpen ? 'open' : ''}`}

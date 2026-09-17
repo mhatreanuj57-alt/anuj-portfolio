@@ -9,6 +9,7 @@
 
     // All interactive elements need pointer-events
     button,
+    a.nav-btn,
     .map-panel,
     .audio-panel,
     .menu-overlay {
@@ -18,6 +19,8 @@
 
 // === BUTTONS BASE STYLE ===
 .nav-btn {
+    color: inherit;
+    text-decoration: none;
     position: relative;
     display: flex;
     align-items: center;

@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber';
 import { useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 import { usePerformance } from '../../../context/PerformanceContext';
+import { useAchievements } from '../../../context/AchievementsContext';
 
 /**
  * Doodles Component - Hand-drawn Sketch Elements
@@ -16,6 +17,7 @@ import { usePerformance } from '../../../context/PerformanceContext';
 const Doodles = () => {
     const groupRef = useRef();
     const { tier } = usePerformance();
+    const { unlockAchievement } = useAchievements();
     const isLowTier = tier === 'LOW';
 
     // Load all sketch textures
@@ -84,6 +86,9 @@ const Doodles = () => {
                 floatAmount={0.025}
             />
 
+            {/* Easter egg: a small clickable sparkle hidden beside the avatar. */}
+            <SecretSparkle position={[-1.62, -0.18, 0.6]} onReveal={() => unlockAchievement('hidden_gem')} />
+
             {/* Minor decorative elements - HIDDEN on LOW tier for performance */}
             {!isLowTier && (
                 <>
@@ -105,6 +110,43 @@ const Doodles = () => {
                     <ThoughtBubble position={[0.9, 0.7, 0.5]} />
                 </>
             )}
+        </group>
+    );
+};
+
+const SecretSparkle = ({ position, onReveal }) => {
+    const ref = useRef();
+
+    useFrame((state) => {
+        if (!ref.current) return;
+        const time = state.clock.elapsedTime;
+        ref.current.rotation.z = time * 0.55;
+        ref.current.scale.setScalar(1 + Math.sin(time * 2.2) * 0.12);
+    });
+
+    return (
+        <group ref={ref} position={position}>
+            <mesh
+                onClick={(event) => {
+                    event.stopPropagation();
+                    onReveal();
+                }}
+                onPointerOver={() => { document.body.style.cursor = 'pointer'; }}
+                onPointerOut={() => { document.body.style.cursor = 'auto'; }}
+            >
+                <circleGeometry args={[0.16, 8]} />
+                <meshBasicMaterial color="#f5bc42" transparent opacity={0.01} depthWrite={false} />
+            </mesh>
+            {[0, 1, 2, 3].map((index) => (
+                <mesh key={index} rotation={[0, 0, index * Math.PI / 4]}>
+                    <planeGeometry args={[0.24, 0.035]} />
+                    <meshBasicMaterial color="#d39d25" transparent opacity={0.88} side={THREE.DoubleSide} />
+                </mesh>
+            ))}
+            <mesh>
+                <circleGeometry args={[0.045, 12]} />
+                <meshBasicMaterial color="#f8d878" />
+            </mesh>
         </group>
     );
 };

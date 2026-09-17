@@ -33,7 +33,11 @@ export const SceneProvider = ({ children }) => {
     const enterRoom = useCallback((roomId) => {
         setCurrentRoom(roomId);
         setExitRequested(false); // Clear any pending exit request
-        setOverlayContent(null); // Clear overlay on room change
+        // Carousel is a fullscreen editor. Open it in the same state update
+        // that completes entry, so no temporary 3D preview can flash first.
+        setOverlayContent(roomId === 'carousel'
+            ? { layout: 'carousel_editor', title: 'CAROUSEL' }
+            : null);
 
         // Teleportation cleanup - if we just teleported in
         setIsTeleporting(false);

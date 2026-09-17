@@ -2,7 +2,11 @@
   "rewrites": [
     { "source": "/start", "destination": "/start/index.html" },
     { "source": "/start/", "destination": "/start/index.html" },
-    { "source": "/(about|gallery|studio|contact|carousel)/?", "destination": "/index.html" }
+    { "source": "/about", "destination": "/index.html" },
+    { "source": "/gallery", "destination": "/index.html" },
+    { "source": "/studio", "destination": "/index.html" },
+    { "source": "/contact", "destination": "/index.html" },
+    { "source": "/carousel", "destination": "/index.html" }
   ],
   "functions": { "api/generateCarousel.js": { "maxDuration": 120 } },
   "headers": [

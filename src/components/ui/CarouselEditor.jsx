@@ -25,13 +25,24 @@ const FONT_OPTIONS = [
     { label: 'General Sans', value: "'General Sans', sans-serif", category: 'modern' },
 ];
 
-// Most display fonts in the picker do not include Devanagari glyphs. Keep the
-// selected font for scripts it supports, then use a purpose-built Marathi/Hindi
-// fallback for the missing glyphs. The generic family must stay last, otherwise
-// browsers choose it before reaching the Devanagari font.
+// Most picker fonts only contain Latin glyphs. Retain each selected font for
+// Latin, then pair it with a Devanagari family in the same visual category for
+// Marathi. The generic family must stay last so it cannot win too early.
 const fontStack = (fontFamily = "'Cabin Sketch', cursive") => {
     const withoutGenericFallback = fontFamily.replace(/,\s*(cursive|sans-serif|serif|monospace)\s*$/i, '');
-    return `${withoutGenericFallback}, 'Noto Sans Devanagari', 'Nirmala UI', sans-serif`;
+    let devanagariFallback = "'Noto Sans Devanagari'";
+
+    if (/Rubik Scribble|Syne|Clash Display|Cabinet Grotesk/i.test(fontFamily)) {
+        devanagariFallback = "'Yatra One'"; // bold, ornamental display
+    } else if (/Cabin Sketch|Caveat|Gloria Hallelujah/i.test(fontFamily)) {
+        devanagariFallback = "'Kalam'"; // handwritten / sketch
+    } else if (/DM Serif Display|Playfair Display/i.test(fontFamily)) {
+        devanagariFallback = "'Tiro Devanagari Marathi'"; // editorial serif
+    } else if (/Outfit|Space Grotesk|Sora|Plus Jakarta Sans/i.test(fontFamily)) {
+        devanagariFallback = "'Hind'"; // clean modern sans
+    }
+
+    return `${withoutGenericFallback}, ${devanagariFallback}, 'Noto Sans Devanagari', 'Nirmala UI', sans-serif`;
 };
 
 const COLOR_PALETTE = [

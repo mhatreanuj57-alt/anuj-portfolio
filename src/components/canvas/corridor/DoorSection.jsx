@@ -1133,6 +1133,30 @@ const DoorSection = ({
                                 CONTACT
                             </Text>
                         )}
+                        {label === 'CAROUSEL LAB' && (
+                            <group position={[0, 0, 0.01]}>
+                                <Text
+                                    font="/fonts/CabinSketch-Bold.ttf"
+                                    fontSize={0.22}
+                                    color="#111111"
+                                    anchorX="center"
+                                    anchorY="bottom"
+                                    position={[0, -0.02, 0]}
+                                >
+                                    CAROUSEL
+                                </Text>
+                                <Text
+                                    font="/fonts/CabinSketch-Bold.ttf"
+                                    fontSize={0.22}
+                                    color="#111111"
+                                    anchorX="center"
+                                    anchorY="top"
+                                    position={[0, 0.02, 0]}
+                                >
+                                    LAB
+                                </Text>
+                            </group>
+                        )}
                     </group>
 
                     {/* === DOOR FRAME (textured) === */}

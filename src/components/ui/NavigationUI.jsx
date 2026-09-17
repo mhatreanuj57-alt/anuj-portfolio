@@ -16,6 +16,7 @@ const ROOMS = [
     { id: 'contact', label: 'Contact', x: 57, y: 25 },  // Pier/dock (top right)
     { id: 'studio', label: 'Studio', x: 57, y: 55 },    // Monitors stack (right side)
     { id: 'carousel', label: 'Carousel', x: 43, y: 25 },
+    { id: 'live-projects', label: 'Live Projects', x: 84, y: 87 },
 ];
 
 // Pin starting position - the dashed circle at the bottom of the tower
@@ -368,6 +369,21 @@ const NavigationUI = () => {
                                 </g>
                             </svg>
 
+                            {/* Live Projects: a hand-drawn browser window with a launch arrow. */}
+                            <svg
+                                className={`map-live-projects-landmark ${(hoveredRoom === 'live-projects' || currentRoom === 'live-projects') ? 'is-active' : ''}`}
+                                viewBox="0 0 100 100"
+                                aria-hidden="true"
+                            >
+                                <path className="map-live-projects-route" d="M62 82 C68 82, 72 84, 77 86" />
+                                <g transform="translate(77 77) rotate(-5)">
+                                    <rect x="0" y="2" width="13" height="10" rx="0.7" />
+                                    <path d="M0.8 4.8 H12.2 M3 3.4 H3.1 M5 3.4 H5.1" />
+                                    <path d="M4 8.5 L6.2 6.5 L8 8 L10.1 5.8" className="map-live-projects-chart" />
+                                    <path d="M9.1 0.7 L13.6 0.7 L13.6 5.2 M13.3 0.9 L8.6 5.6" className="map-live-projects-launch" />
+                                </g>
+                            </svg>
+
                             {/* Hover Zones — 4 quadrants covering the map */}
                             <button
                                 type="button"
@@ -419,6 +435,16 @@ const NavigationUI = () => {
                                 onClick={() => handleRoomClick('carousel')}
                                 aria-label="Teleport to Carousel room"
                             />
+                            <button
+                                type="button"
+                                className="map-hover-zone zone-live-projects"
+                                onMouseEnter={() => setHoveredRoom('live-projects')}
+                                onMouseLeave={() => setHoveredRoom(null)}
+                                onFocus={() => setHoveredRoom('live-projects')}
+                                onBlur={() => setHoveredRoom(null)}
+                                onClick={() => handleRoomClick('live-projects')}
+                                aria-label="Teleport to Live Projects room"
+                            />
 
                             {/* Permanent Map Text Labels */}
                             <div className="map-room-label about">ABOUT</div>
@@ -426,12 +452,13 @@ const NavigationUI = () => {
                             <div className="map-room-label contact">CONTACT</div>
                             <div className="map-room-label studio">THE<br />STUDIO</div>
                             <div className="map-room-label carousel">CAROUSEL<br />LAB</div>
+                            <div className="map-room-label live-projects">LIVE<br />PROJECTS</div>
 
                             {/* Pin slot markers - 4 locations */}
                             {ROOMS.map((room) => (
                                 <button
                                     key={room.id}
-                                    className={`pin-slot ${currentRoom === room.id ? 'active' : ''} ${hoveredRoom === room.id ? 'hovered' : ''}`}
+                                    className={`pin-slot ${room.id} ${currentRoom === room.id ? 'active' : ''} ${hoveredRoom === room.id ? 'hovered' : ''}`}
                                     style={{ left: `${room.x}%`, top: `${room.y}%` }}
                                     onClick={() => handleRoomClick(room.id)}
                                     onMouseEnter={() => setHoveredRoom(room.id)}

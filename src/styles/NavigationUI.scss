@@ -180,7 +180,7 @@
     left: 50%;
     transform: translateX(-50%) translateY(-100%);
     width: 90%;
-    max-width: 500px;
+    max-width: 680px;
     border: none;
     border-radius: 0;
     filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.15));
@@ -371,6 +371,14 @@
         //background: rgba(0, 100, 255, 0.25); // DEBUG blue
     }
 
+    .zone-live-projects {
+        right: 2%;
+        bottom: 1%;
+        width: 23%;
+        height: 19%;
+        //background: rgba(0, 160, 130, 0.25); // DEBUG green
+    }
+
     .map-room-label {
         position: absolute;
         font-family: 'Cabin Sketch', cursive, sans-serif;
@@ -416,6 +424,13 @@
             font-size: 0.9rem;
             line-height: 1;
         }
+
+        &.live-projects {
+            top: 94%;
+            left: 86%;
+            font-size: 0.78rem;
+            line-height: 0.95;
+        }
     }
 
     .pin-slot {
@@ -442,6 +457,12 @@
 
         &.active {
             filter: drop-shadow(0 0 4px rgba(200, 50, 50, 0.5));
+        }
+
+        // The Live Projects landmark is its own SVG, so it does not need the
+        // legacy square pin-slot drawn over the artwork.
+        &.live-projects {
+            display: none;
         }
     }
 
@@ -513,6 +534,56 @@
 
         .map-carousel-landmark__swipe {
             stroke-width: 0.32;
+        }
+    }
+
+    .map-live-projects-landmark {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 3;
+        pointer-events: none;
+        overflow: visible;
+
+        rect,
+        path {
+            fill: #fffdf8;
+            stroke: #1a1a1a;
+            stroke-width: 0.42;
+            vector-effect: non-scaling-stroke;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        path {
+            fill: none;
+        }
+
+        .map-live-projects-route {
+            stroke-dasharray: 1.2 1.1;
+            stroke-width: 0.34;
+        }
+
+        .map-live-projects-chart {
+            stroke-width: 0.34;
+        }
+
+        .map-live-projects-launch {
+            stroke-width: 0.48;
+        }
+
+        &.is-active {
+            filter: drop-shadow(0 0 3px rgba(33, 151, 109, 0.7));
+
+            rect {
+                fill: #e7f5ec;
+            }
+
+            .map-live-projects-chart,
+            .map-live-projects-launch {
+                stroke: #17744f;
+            }
         }
     }
 }

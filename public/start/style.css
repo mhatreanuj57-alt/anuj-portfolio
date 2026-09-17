@@ -23,16 +23,6 @@
 
 * { box-sizing: border-box; }
 body { margin: 0; min-height: 100svh; isolation: isolate; }
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background: url('/images/IMAGE%201%20%E2%80%94%20MAIN%20IMAGE.png') center / cover no-repeat;
-  opacity: 0.28;
-}
-.sheet { position: relative; z-index: 1; }
 ::selection { color: var(--paper); background: var(--blue); }
 a { color: inherit; text-decoration: none; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 a:focus-visible { outline: 2px solid var(--blue); outline-offset: 8px; }
@@ -113,6 +103,61 @@ main { flex: 1; display: flex; flex-direction: column; justify-content: center; 
 .work-link:focus-visible .word:not([data-typeset]), .work-link:active .word:not([data-typeset]) { color: var(--blue); }
 .work-pending { position: absolute; top: 0; right: 12px; font: 12px Arial, sans-serif; color: var(--muted); letter-spacing: 0; }
 
+/* Two pixel-aligned layers: the canvas starts as the A18 cover and is scratched
+   away to expose the untouched portrait below. */
+.paper-reveal { width: min(100%, 860px); margin: clamp(30px, 5vw, 58px) auto 0; }
+.paper-reveal-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  box-shadow: 7px 7px 0 var(--ink);
+  touch-action: none;
+  cursor: crosshair;
+}
+.paper-reveal-main, .paper-reveal-cover, .paper-reveal-particles {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.paper-reveal-main { display: block; object-fit: cover; object-position: center; }
+.paper-reveal-cover, .paper-reveal-particles { pointer-events: none; }
+.paper-reveal-cover { transition: opacity 360ms ease; }
+.paper-reveal-stage.is-complete .paper-reveal-cover { opacity: 0; }
+.paper-reveal-hint {
+  position: absolute;
+  right: clamp(14px, 3vw, 30px);
+  bottom: clamp(12px, 2vw, 24px);
+  z-index: 2;
+  padding: 8px 12px;
+  color: var(--paper);
+  background: var(--ink);
+  font-family: 'Barlow Condensed', 'Arial Narrow', Arial, sans-serif;
+  font-size: clamp(17px, 2.4vw, 24px);
+  letter-spacing: .01em;
+  transform: rotate(-2deg);
+  transition: opacity 260ms ease, transform 260ms ease;
+}
+.paper-reveal-stage.has-started .paper-reveal-hint { opacity: 0; transform: translateY(8px) rotate(-2deg); }
+.paper-reveal-button {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  z-index: 3;
+  display: none;
+  padding: 9px 12px;
+  color: var(--paper);
+  background: var(--ink);
+  border: 1px solid var(--paper);
+  font: 700 15px Arial, sans-serif;
+  cursor: pointer;
+}
+.paper-reveal-button:focus-visible { outline: 2px solid var(--blue); outline-offset: 4px; }
+.paper-reveal + .side-annotation { margin-top: 24px; }
+
 .profiles { display: flex; flex-wrap: wrap; justify-content: center; gap: clamp(12px, 2vw, 24px); margin-top: clamp(42px, 7vh, 76px); max-width: 680px; margin-inline: auto; }
 .profiles a {
   position: relative; display: inline-flex; align-items: center; justify-content: center;
@@ -186,6 +231,8 @@ footer { display: flex; justify-content: center; align-items: center; margin-top
   .last-word { gap: .23em; }
   .press-arrow { width: .56em; height: .56em; }
   .sketchbook-link { font-size: clamp(45px, 13.6vw, 75px); align-self: flex-end; padding-top: 12px; }
+  .paper-reveal { margin-top: 30px; }
+  .paper-reveal-stage { box-shadow: 4px 4px 0 var(--ink); }
   .work-pending { font-size: 10px; right: 10px; top: -3px; }
   .profiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 18px; row-gap: 0; margin-top: 34px; }
   .profiles a { font-size: 14px; width: fit-content; min-width: 44px; min-height: 44px; }
@@ -208,6 +255,8 @@ footer { display: flex; justify-content: center; align-items: center; margin-top
   .work-link:is(:hover, :focus-visible, :active) .glyph,
   .work-link:is(:hover, :focus-visible, :active) .press-arrow { --press: 1 !important; }
   .glyph-face, .arrow-face { transition: none; transform: none; }
+  .paper-reveal-stage { cursor: default; touch-action: auto; }
+  .paper-reveal-button { display: block; }
 }
 @media (forced-colors: active) {
   .word, .glyph-face { color: LinkText; -webkit-text-stroke: 0; text-shadow: none; }

@@ -43,6 +43,15 @@
         // clip-path set inline
     }
 
+    // The initial load gets the A18 cover at exactly 50% visual strength.
+    // Room-to-room paper transitions retain the regular paper texture above.
+    &--intro .preloader__half {
+        background-color: #f4f1e9;
+        background-image:
+            linear-gradient(rgba(244, 241, 233, 0.5), rgba(244, 241, 233, 0.5)),
+            url('/images/IMAGE%202%20%E2%80%94%20COVER%20%20MASK%20IMAGE.png');
+    }
+
     &__overlay {
         position: absolute;
         top: 0;

@@ -93,6 +93,7 @@ export const CORRIDOR_TEXTURES = [
 
 // Standard HTML Image assets (preloaded via new Image() in App.jsx)
 export const IMAGE_ASSETS = [
+    '/images/IMAGE%201%20%E2%80%94%20MAIN%20IMAGE.png',
     '/images/avatar-thinking.webp',
     '/images/avatar-hero.webp',
     '/images/ink-splash.webp',

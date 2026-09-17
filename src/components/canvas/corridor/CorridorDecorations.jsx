@@ -400,15 +400,15 @@ const CorridorDecorations = ({ segmentLength, zOffset, corridorWidth = 4, corrid
         {
             z: zOffset - 40,         // Między Studio a About (relZ -34 do -46)
             side: 'right',
-            width: 2.5,
-            height: 2.5 / 1.785,
+            width: 2.35,
+            height: 2.35 / 1.5,
             y: 0.25,
             id: 'frame-3',
-            signature: "Empty canvas!\nWant your art here?\nContact me!",
-            signatureX: 0,
-            signatureY: 0,
-            signatureSize: 0.12,
-            signatureColor: '#333333'
+            // Keep the portrait's native 3:2 aspect ratio inside this frame.
+            image: '/images/IMAGE%201%20%E2%80%94%20MAIN%20IMAGE.png',
+            imageWidth: 2.18,
+            imageHeight: 2.18 / 1.5,
+            offsetFromWall: 0.1,
         },
         {
             z: zOffset - 55,         // Między About a Connect (relZ -50 do -60)

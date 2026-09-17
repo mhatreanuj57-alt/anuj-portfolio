@@ -360,7 +360,7 @@ const Preloader = ({ onComplete, ready }) => {
   const percentageText = `${Math.round(safeProgress)}%`;
 
   return (
-    <div className="preloader" ref={containerRef}>
+    <div className="preloader preloader--intro" ref={containerRef}>
       {/* LEFT HALF */}
       <div
         className="preloader__half preloader__half--left"

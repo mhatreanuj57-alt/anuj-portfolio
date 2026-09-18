@@ -20,6 +20,7 @@ export const SceneProvider = ({ children }) => {
     const [hasEntered, setHasEntered] = useState(false);  // Has user clicked entrance doors?
     const [exitRequested, setExitRequested] = useState(false); // Signal to request exit from room
     const [overlayContent, setOverlayContent] = useState(null); // Content for overlay (Studio monitor etc)
+    const [secretUnlocked, setSecretUnlocked] = useState(false);
 
     // Teleportation states
     const [teleportTarget, setTeleportTarget] = useState(null); // Room ID to teleport to
@@ -79,6 +80,10 @@ export const SceneProvider = ({ children }) => {
 
     const closeOverlay = useCallback(() => {
         setOverlayContent(null);
+    }, []);
+
+    const unlockSecretRoom = useCallback(() => {
+        setSecretUnlocked(true);
     }, []);
 
     // Teleportation functions
@@ -150,6 +155,7 @@ export const SceneProvider = ({ children }) => {
         hasEntered,
         exitRequested,
         overlayContent, // Exposed
+        secretUnlocked,
         enterRoom,
         exitRoom,
         requestExit,
@@ -157,6 +163,7 @@ export const SceneProvider = ({ children }) => {
         markEntered,
         openOverlay,    // Exposed
         closeOverlay,   // Exposed
+        unlockSecretRoom,
         isInRoom: currentRoom !== null,
         // Deep linking
         initialRoom: initialRoom.current,
@@ -179,6 +186,7 @@ export const SceneProvider = ({ children }) => {
         hasEntered,
         exitRequested,
         overlayContent,
+        secretUnlocked,
         enterRoom,
         exitRoom,
         requestExit,
@@ -186,6 +194,7 @@ export const SceneProvider = ({ children }) => {
         markEntered,
         openOverlay,
         closeOverlay,
+        unlockSecretRoom,
         // Teleportation dependencies
         teleportTarget,
         isTeleporting,

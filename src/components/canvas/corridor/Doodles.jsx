@@ -87,7 +87,7 @@ const Doodles = () => {
             />
 
             {/* Easter egg: a small clickable sparkle hidden beside the avatar. */}
-            <SecretSparkle position={[-1.62, -0.18, 0.6]} onReveal={() => unlockAchievement('hidden_gem')} />
+            <SecretSparkle position={[-1.62, -0.18, 0.6]} onReveal={() => { unlockAchievement('hidden_gem'); window.dispatchEvent(new Event('portfolio:debug-puzzle')); }} />
 
             {/* Minor decorative elements - HIDDEN on LOW tier for performance */}
             {!isLowTier && (

@@ -6,6 +6,7 @@ import { setMusicVolume, getMusicVolume } from '../../utils/audioManager';
 import { useAchievements } from '../../context/AchievementsContext';
 import AchievementPopup from './AchievementPopup';
 import AchievementsPanel from './AchievementsPanel';
+import DebugPuzzle from './DebugPuzzle';
 import '../../styles/NavigationUI.scss';
 
 // Room data for the map - positions are percentages on the map image
@@ -23,9 +24,16 @@ const ROOMS = [
 const PIN_START_POSITION = { x: 50.5, y: 97 };
 
 const NavigationUI = () => {
-    const { currentRoom, isInRoom, requestExit, hasEntered, teleportTo, isTeleporting } = useScene();
+    const { currentRoom, isInRoom, requestExit, hasEntered, teleportTo, isTeleporting, unlockSecretRoom } = useScene();
     const { isMuted, globalVolume, setGlobalVolume } = useAudio();
-    const { showTutorial } = useAchievements();
+    const { showTutorial, unlockAchievement } = useAchievements();
+    const [isDebugPuzzleOpen, setIsDebugPuzzleOpen] = useState(false);
+
+    useEffect(() => {
+        const openPuzzle = () => setIsDebugPuzzleOpen(true);
+        window.addEventListener('portfolio:debug-puzzle', openPuzzle);
+        return () => window.removeEventListener('portfolio:debug-puzzle', openPuzzle);
+    }, []);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [hoveredRoom, setHoveredRoom] = useState(null);
     const [isExiting, setIsExiting] = useState(false); // Track when back button is clicked
@@ -221,6 +229,16 @@ const NavigationUI = () => {
         <div className="navigation-ui">
             {/* Global Achievement Popup */}
             <AchievementPopup />
+            <DebugPuzzle
+                open={isDebugPuzzleOpen}
+                onClose={() => setIsDebugPuzzleOpen(false)}
+                onEnterSecret={() => {
+                    unlockAchievement('hidden_gem');
+                    unlockSecretRoom();
+                    setIsDebugPuzzleOpen(false);
+                    teleportTo('secret');
+                }}
+            />
 
             {/* Back Button - Only visible in rooms, hides up when clicked */}
             {hasEntered && isInRoom && (

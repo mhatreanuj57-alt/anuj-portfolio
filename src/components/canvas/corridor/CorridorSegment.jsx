@@ -9,6 +9,7 @@ import Avatar from './Avatar';
 import HeroText from './HeroText';
 import Doodles from './Doodles';
 import CorridorDecorations from './CorridorDecorations';
+import { useScene } from '../../../context/SceneContext';
 
 /**
  * CorridorSegment Component
@@ -36,6 +37,7 @@ const CorridorSegment = ({
     zClip = 100000, // Clipping plane (render everything with Z < zClip)
     setCameraOverride // Function to take over camera control
 }) => {
+    const { secretUnlocked, isTeleporting, currentRoom, pendingDoorClick } = useScene();
 
     // Calculate Z offset based on segment index
     // Segment 0 starts at Z=10, goes to Z=-70
@@ -73,6 +75,16 @@ const CorridorSegment = ({
                 color: '#e6f5ef'
             },
             {
+                id: `secret-${segmentIndex}`,
+                roomId: 'secret',
+                relativeZ: -32,
+                side: 'left',
+                label: 'THE ARCHIVE',
+                icon: 'â˜…',
+                color: '#e9d9ba',
+                requiresUnlock: true
+            },
+            {
                 id: `about-${segmentIndex}`,
                 roomId: 'about',
                 relativeZ: -48,
@@ -81,6 +93,16 @@ const CorridorSegment = ({
                 icon: '★',
                 color: '#efe6f5',
                 enterDistance: 25 // Enter deep into the room (clouds are far back)
+            },
+            {
+                // Opposite About: visitors can choose the path that fits their purpose.
+                id: `intelligence-${segmentIndex}`,
+                roomId: 'intelligence',
+                relativeZ: -48,
+                side: 'right',
+                label: 'THE BRIEFING',
+                icon: 'â—†',
+                color: '#e5edf5'
             },
             {
                 id: `connect-${segmentIndex}`,
@@ -132,7 +154,9 @@ const CorridorSegment = ({
             <CorridorWalls
                 zStart={zOffset}
                 length={SEGMENT_LENGTH}
-                doorPositions={doors}
+                // The Archive has no corridor opening. It can only be reached
+                // through the puzzle transition, so it must not reveal a gap.
+                doorPositions={doors.filter((door) => door.roomId !== 'secret')}
                 zClip={zClip}
             />
 
@@ -161,7 +185,12 @@ const CorridorSegment = ({
 
             {/* === DOOR SECTIONS (wall + door + label as one unit) === */}
             {/* Hidden during entrance animation for segment -1 */}
-            {!hideSegmentDoors && doors.map((door) => (
+            {!hideSegmentDoors && doors.map((door) => {
+                const renderSecretDoor = !door.requiresUnlock || (
+                    secretUnlocked && (isTeleporting || currentRoom === 'secret' || pendingDoorClick === 'secret')
+                );
+                if (!renderSecretDoor) return null;
+                return (
                 <DoorSection
                     key={door.id}
                     position={[
@@ -175,11 +204,13 @@ const CorridorSegment = ({
                     icon={door.icon}
                     color={door.color}
                     enterDistance={door.enterDistance}
+                    requiresUnlock={door.requiresUnlock}
                     onEnter={() => onDoorEnter?.(door.roomId)}
                     setCameraOverride={setCameraOverride}
                     segmentIndex={segmentIndex}
                 />
-            ))}
+                );
+            })}
 
             {/* === LIGHTING === */}
             {/* pointLight removed for optimization as it didn't affect visuals significantly */}

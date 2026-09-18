@@ -1,0 +1,13 @@
+.debug-puzzle { position: fixed; inset: 0; z-index: 150; display: grid; place-items: center; padding: 24px; background: rgba(15, 22, 18, .58); pointer-events: auto; }
+.debug-puzzle__card { position: relative; width: min(92vw, 540px); padding: 28px; background: #fffdf8 url('/textures/paper-texture.webp'); box-shadow: 0 24px 80px rgba(0,0,0,.32); text-align: center; }
+.debug-puzzle__eyebrow, .debug-puzzle h2, .debug-puzzle p, .debug-puzzle__unlock { font-family: 'Cabin Sketch', cursive, sans-serif; }
+.debug-puzzle__eyebrow { margin: 0; color: #a14b3c; letter-spacing: .14em; font-size: 12px; }
+.debug-puzzle h2 { margin: 6px 0; font-size: 34px; color: #1b231d; }
+.debug-puzzle p { margin: 0 0 18px; color: #5e574e; }
+.debug-puzzle__close { position: absolute; top: 8px; right: 12px; border: 0; background: transparent; font-size: 28px; cursor: pointer; }
+.debug-puzzle__grid { display: grid; grid-template-columns: repeat(3, 1fr); width: min(78vw, 390px); aspect-ratio: 1; margin: 0 auto; border: 5px solid #242b25; }
+.debug-puzzle__piece { border: 1px solid rgba(255,255,255,.7); background-image: url('/images/IMAGE%202%20%E2%80%94%20COVER%20%20MASK%20IMAGE.png'); background-size: 300% 300%; cursor: pointer; transition: transform .15s ease, outline .15s ease; }
+.debug-puzzle__piece:hover, .debug-puzzle__piece.is-selected { outline: 4px solid #d3a237; outline-offset: -4px; transform: scale(.97); z-index: 1; }
+.debug-puzzle__grid.is-solved { border-color: #2b7b54; box-shadow: 0 0 24px rgba(43,123,84,.45); }
+.debug-puzzle__success { color: #267350 !important; font-weight: 700; }
+.debug-puzzle__unlock { margin-top: 20px; padding: 12px 18px; border: 0; background: #1e4231; color: #fffdf8; cursor: pointer; font-size: 17px; }

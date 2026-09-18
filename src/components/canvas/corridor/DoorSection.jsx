@@ -72,7 +72,8 @@ const DoorSection = ({
     onEnter,
     enterDistance = 8, // Default fly-through distance
     setCameraOverride, // Function to take control of camera from hook
-    segmentIndex
+    segmentIndex,
+    requiresUnlock = false
 }) => {
     const groupRef = useRef(); // Main group that tilts
     const doorRef = useRef();
@@ -104,7 +105,8 @@ const DoorSection = ({
         isTeleporting,
         isFastTeleport,
         signalRoomReady,
-        teleportPhase // We need this to delay reset until curtain is closed
+        teleportPhase, // We need this to delay reset until curtain is closed
+        secretUnlocked
     } = useScene();
 
 
@@ -940,9 +942,18 @@ const DoorSection = ({
 
     const signTexture = useTexture(signTextureUrl);
 
+    // The Archive is a true secret: it is only visible for its puzzle-driven
+    // transition and while the visitor is inside it. It never becomes a normal
+    // corridor destination after being unlocked.
+    const isSecretDoorVisible = !requiresUnlock || (
+        secretUnlocked && (isTeleporting || currentRoom === roomId || pendingDoorClick === doorId)
+    );
+
+    if (requiresUnlock && !secretUnlocked) return null;
+
     return (
         // Outer group at pivot position (outer edge of wall)
-        <group position={[pivotX, position[1], position[2]]}>
+        <group position={[pivotX, position[1], position[2]]} visible={isSecretDoorVisible}>
             {/* Inner group that rotates - contains wall + door */}
             <group ref={groupRef}>
                 {/* Wall segment with door hole */}
@@ -1156,6 +1167,18 @@ const DoorSection = ({
                             >
                                 CONTACT
                             </Text>
+                        )}
+                        {label === 'THE BRIEFING' && (
+                            <group position={[0, 0, 0.01]}>
+                                <Text font="/fonts/CabinSketch-Bold.ttf" fontSize={0.21} color="#111111" anchorX="center" anchorY="bottom" position={[0, -0.02, 0]}>THE</Text>
+                                <Text font="/fonts/CabinSketch-Bold.ttf" fontSize={0.21} color="#111111" anchorX="center" anchorY="top" position={[0, 0.03, 0]}>BRIEFING</Text>
+                            </group>
+                        )}
+                        {label === 'THE ARCHIVE' && (
+                            <group position={[0, 0, 0.01]}>
+                                <Text font="/fonts/CabinSketch-Bold.ttf" fontSize={0.2} color="#111111" anchorX="center" anchorY="bottom" position={[0, -0.02, 0]}>SECRET</Text>
+                                <Text font="/fonts/CabinSketch-Bold.ttf" fontSize={0.2} color="#111111" anchorX="center" anchorY="top" position={[0, 0.03, 0]}>ARCHIVE</Text>
+                            </group>
                         )}
                         {label === 'CAROUSEL LAB' && (
                             <group position={[0, 0, 0.01]}>

@@ -10,6 +10,8 @@ import AboutRoom from '../rooms/About/AboutRoom';
 import ContactRoom from '../rooms/Contact/ContactRoom';
 import CarouselRoom from '../rooms/Carousel/CarouselRoom';
 import LiveProjectsRoom from '../rooms/LiveProjects/LiveProjectsRoom';
+import PortfolioIntelligenceRoom from '../rooms/Intelligence/PortfolioIntelligenceRoom';
+import SecretArchiveRoom from '../rooms/SecretArchive/SecretArchiveRoom';
 
 // Room configurations
 const ROOM_CONFIG = {
@@ -27,7 +29,9 @@ const SUBTITLES = {
     'DEV DIARY': 'My development journey',
     "LET'S CONNECT": 'Get in touch with me',
     'CAROUSEL LAB': 'Create social slides with AI',
-    'LIVE PROJECTS': 'Explore projects currently live on the web'
+    'LIVE PROJECTS': 'Explore projects currently live on the web',
+    'THE BRIEFING': 'Choose a tailored portfolio path',
+    'THE ARCHIVE': 'A hidden room for builders'
 };
 
 // Naturalny kafelek listwy: 1582x94px przy wysokości 0.15 → ~2.524 units szerokości
@@ -128,7 +132,7 @@ const RoomInterior = memo(({ label, showRoom, onReady, isExiting }) => {
 
     // Trigger onReady for generic rooms (which don't have their own component to do it)
     useEffect(() => {
-        if (showRoom && !['THE GALLERY', 'THE STUDIO', 'THE ABOUT', "LET'S CONNECT", 'CAROUSEL LAB', 'LIVE PROJECTS'].includes(label)) {
+        if (showRoom && !['THE GALLERY', 'THE STUDIO', 'THE ABOUT', "LET'S CONNECT", 'CAROUSEL LAB', 'LIVE PROJECTS', 'THE BRIEFING', 'THE ARCHIVE'].includes(label)) {
             onReady?.();
         }
     }, [showRoom, label, onReady]);
@@ -237,6 +241,10 @@ const RoomInterior = memo(({ label, showRoom, onReady, isExiting }) => {
                                 <LiveProjectsRoom showRoom={showRoom} onReady={onReady} isExiting={isExiting} />
                             </Suspense>
                         </group>
+                    ) : label === 'THE BRIEFING' ? (
+                        <group position={[0, -0.5, -corridorDepth]}><Suspense fallback={null}><PortfolioIntelligenceRoom showRoom={showRoom} onReady={onReady} /></Suspense></group>
+                    ) : label === 'THE ARCHIVE' ? (
+                        <group position={[0, -0.5, -corridorDepth]}><Suspense fallback={null}><SecretArchiveRoom showRoom={showRoom} onReady={onReady} /></Suspense></group>
                     ) : (
                         // === DEFAULT GENERIC ROOM (For other sections) ===
                         <group position={[0, roomHeight / 2 - corridorHeight / 2, roomZ]}>

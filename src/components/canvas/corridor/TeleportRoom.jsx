@@ -8,7 +8,9 @@ const DOOR_POSITIONS_Z = {
     'gallery': -6,   // 10 - 18 + 2
     'live-projects': -6, // Opposite the Gallery door
     'studio': -20,   // 10 - 32 + 2
+    'secret': -20,   // Opposite the Studio door
     'about': -36,    // 10 - 48 + 2
+    'intelligence': -36, // Opposite the About door
     'contact': -50,  // 10 - 62 + 2
     'carousel': -50  // Opposite the Contact door: 10 - 62 + 2
 };

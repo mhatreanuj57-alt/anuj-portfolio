@@ -28,6 +28,13 @@ if (POSTHOG_KEY) {
 
 // Lazy load the heavy 3D experience
 const Experience = lazy(() => import('./components/canvas/Experience'));
+const PriceFinder = lazy(() => import('./components/canvas/rooms/LiveProjects/LivePriceFinderApp'));
+
+function LiveProjectsScreen() {
+  const { currentRoom, exitRequested, isTeleporting } = useScene();
+  if (currentRoom !== 'live-projects' || exitRequested || isTeleporting) return null;
+  return <Suspense fallback={null}><div className="lp-screen"><PriceFinder /></div></Suspense>;
+}
 
 import './styles/main.scss';
 
@@ -237,6 +244,7 @@ function AppContent() {
           {isLoaded && (
             <>
               <NavigationUI />
+              <LiveProjectsScreen />
               <GlobalOverlay />
               <PaperTransition />
               <ScreenReaderOverlay />

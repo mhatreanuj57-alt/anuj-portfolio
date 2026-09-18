@@ -7,6 +7,7 @@ import { useScene } from '../../../../context/SceneContext';
 import { useAchievements } from '../../../../context/AchievementsContext';
 import { TextureLoader } from 'three';
 import FloatingCodeParticles from './FloatingCodeParticles';
+import BuildLogTimeline from './BuildLogTimeline';
 import { PositionalAudio } from '@react-three/drei';
 import { useAudio } from '../../../../context/AudioManager';
 import { useStudioContent } from '../../../../hooks/useSanityData';
@@ -596,6 +597,7 @@ const StudioRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
                 towerRotationRef={particleTowerRotation}
                 fallOffsetRef={particleFallOffset}
             />
+            <BuildLogTimeline />
         </group>
     );
 };

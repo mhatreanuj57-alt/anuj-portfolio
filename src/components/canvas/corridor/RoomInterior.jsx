@@ -12,6 +12,7 @@ import CarouselRoom from '../rooms/Carousel/CarouselRoom';
 import LiveProjectsRoom from '../rooms/LiveProjects/LiveProjectsRoom';
 import PortfolioIntelligenceRoom from '../rooms/Intelligence/PortfolioIntelligenceRoom';
 import SecretArchiveRoom from '../rooms/SecretArchive/SecretArchiveRoom';
+import VersionControlRoom from '../rooms/VersionControl/VersionControlRoom';
 
 // Room configurations
 const ROOM_CONFIG = {
@@ -31,7 +32,8 @@ const SUBTITLES = {
     'CAROUSEL LAB': 'Create social slides with AI',
     'LIVE PROJECTS': 'Explore projects currently live on the web',
     'THE BRIEFING': 'Choose a tailored portfolio path',
-    'THE ARCHIVE': 'A hidden room for builders'
+    'THE ARCHIVE': 'A hidden room for builders',
+    'THE VERSION CONTROL': 'A record of builds, breaks, and ships'
 };
 
 // Naturalny kafelek listwy: 1582x94px przy wysokości 0.15 → ~2.524 units szerokości
@@ -132,7 +134,7 @@ const RoomInterior = memo(({ label, showRoom, onReady, isExiting }) => {
 
     // Trigger onReady for generic rooms (which don't have their own component to do it)
     useEffect(() => {
-        if (showRoom && !['THE GALLERY', 'THE STUDIO', 'THE ABOUT', "LET'S CONNECT", 'CAROUSEL LAB', 'LIVE PROJECTS', 'THE BRIEFING', 'THE ARCHIVE'].includes(label)) {
+        if (showRoom && !['THE GALLERY', 'THE STUDIO', 'THE ABOUT', "LET'S CONNECT", 'CAROUSEL LAB', 'LIVE PROJECTS', 'THE BRIEFING', 'THE ARCHIVE', 'THE VERSION CONTROL'].includes(label)) {
             onReady?.();
         }
     }, [showRoom, label, onReady]);
@@ -245,6 +247,8 @@ const RoomInterior = memo(({ label, showRoom, onReady, isExiting }) => {
                         <group position={[0, -0.5, -corridorDepth]}><Suspense fallback={null}><PortfolioIntelligenceRoom showRoom={showRoom} onReady={onReady} /></Suspense></group>
                     ) : label === 'THE ARCHIVE' ? (
                         <group position={[0, -0.5, -corridorDepth]}><Suspense fallback={null}><SecretArchiveRoom showRoom={showRoom} onReady={onReady} /></Suspense></group>
+                    ) : label === 'THE VERSION CONTROL' ? (
+                        <group position={[0, -0.5, -corridorDepth]}><Suspense fallback={null}><VersionControlRoom showRoom={showRoom} onReady={onReady} /></Suspense></group>
                     ) : (
                         // === DEFAULT GENERIC ROOM (For other sections) ===
                         <group position={[0, roomHeight / 2 - corridorHeight / 2, roomZ]}>

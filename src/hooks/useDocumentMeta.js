@@ -30,6 +30,11 @@ const ROOM_META = {
         title: 'Live Projects - Anuj Mhatre Portfolio',
         description: 'Explore Anuj Mhatre\'s live web projects and interactive builds.',
     },
+    'version-control': {
+        path: '/version-control',
+        title: 'The Version Control — Anuj Mhatre Portfolio',
+        description: 'Explore Anuj Mhatre’s interactive build record: the first build, repair points, and current production release.',
+    },
     studio: {
         path: '/studio',
         title: 'The Studio — Anuj Mhatre Portfolio',
@@ -54,6 +59,7 @@ const PATH_TO_ROOM = {
     '/gallery': 'gallery',
     '/studio': 'studio',
     '/live-projects': 'live-projects',
+    '/version-control': 'version-control',
     '/contact': 'contact',
     '/carousel': 'carousel',
 };

@@ -123,6 +123,15 @@ const CorridorSegment = ({
                 icon: '◆',
                 color: '#e8e6f5'
             },
+            {
+                id: `version-control-${segmentIndex}`,
+                roomId: 'version-control',
+                relativeZ: -72,
+                side: 'right',
+                label: 'THE VERSION CONTROL',
+                icon: '⌘',
+                color: '#f2e6ce'
+            },
         ];
 
         return doorDefs.map(def => {

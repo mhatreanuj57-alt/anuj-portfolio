@@ -12,7 +12,8 @@ const DOOR_POSITIONS_Z = {
     'about': -36,    // 10 - 48 + 2
     'intelligence': -36, // Opposite the About door
     'contact': -50,  // 10 - 62 + 2
-    'carousel': -50  // Opposite the Contact door: 10 - 62 + 2
+    'carousel': -50, // Opposite the Contact door: 10 - 62 + 2
+    'version-control': -60 // 10 - 72 + 2
 };
 
 /**

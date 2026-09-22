@@ -2,6 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 import './LivePriceFinderApp.css';
 
 const PROJECT_URL = 'https://navi-mumbai-house-price-prediction-26wdhvjsm.vercel.app';
+const PRICE_FINDER_REPO = 'https://github.com/a18-n03/navi-mumbai-house-price-prediction';
+const URBAN_LENS_URL = 'https://urban-lens-seven.vercel.app';
+const URBAN_LENS_REPO = 'https://github.com/a18-n03/Urban-Lens';
 const LOCATION_GROUPS = {
     'Navi Mumbai / NMMC': ['Airoli', 'Vashi', 'Sanpada', 'Koparkhairane', 'Ghansoli', 'Nerul', 'Belapur'],
     'Panvel Municipal Corporation': ['Panvel City', 'New Panvel', 'Kamothe', 'Khandeshwar', 'Kharghar', 'Kalamboli', 'Taloja', 'Ulwe'],
@@ -78,8 +81,36 @@ const ErrorHistogram = ({ records }) => {
 </svg>;
 };
 
+const ExternalLink = ({ href, children, className = 'lp-project-link' }) => <a className={className} href={href} target="_blank" rel="noreferrer">{children} ↗</a>;
+
+const ProjectHub = ({ onOpenFinder }) => <section className="lp-project-hub" aria-label="Live project collection">
+    <div className="lp-hub-intro">
+        <span>DEPLOYED BUILDS / 02</span>
+        <h2>Projects that solve local problems.</h2>
+        <p>Each build is live, functional, and built around a real Navi Mumbai use case—not a static mockup.</p>
+    </div>
+    <div className="lp-project-grid">
+        <article className="lp-project-card lp-project-card--price">
+            <div className="lp-project-icon" aria-hidden="true">⌂</div>
+            <div className="lp-project-eyebrow">PROPERTY INTELLIGENCE</div>
+            <h3>Navi Mumbai / BMC<br />House Price Finder</h3>
+            <p>Locality-level property estimates with live model diagnostics, comparisons, and coverage for MMR and Uran Taluka.</p>
+            <div className="lp-project-tags"><span>React</span><span>LightGBM</span><span>Data Viz</span></div>
+            <div className="lp-project-actions"><button onClick={onOpenFinder}>Explore inside portfolio</button><ExternalLink href={PROJECT_URL}>Live app</ExternalLink><ExternalLink href={PRICE_FINDER_REPO}>GitHub</ExternalLink></div>
+        </article>
+        <article className="lp-project-card lp-project-card--urban">
+            <div className="lp-project-icon" aria-hidden="true">◎</div>
+            <div className="lp-project-eyebrow">CIVIC INTELLIGENCE / NAVI MUMBAI</div>
+            <h3>UrbanLens AI</h3>
+            <p>Turn a road photo into a report the city can act on: AI structures issues, clusters duplicates, maps incidents, and supports prioritisation.</p>
+            <div className="lp-project-tags"><span>Next.js</span><span>FastAPI</span><span>YOLO</span><span>PostGIS</span></div>
+            <div className="lp-project-actions"><ExternalLink href={URBAN_LENS_URL} className="lp-project-launch">Launch UrbanLens</ExternalLink><ExternalLink href={URBAN_LENS_REPO}>GitHub</ExternalLink></div>
+        </article>
+    </div>
+</section>;
+
 export default function LivePriceFinderApp() {
-    const [tab, setTab] = useState('finder');
+    const [tab, setTab] = useState('projects');
     const [model, setModel] = useState(null);
     const [group, setGroup] = useState('Panvel Municipal Corporation');
     const [locality, setLocality] = useState('Kharghar');
@@ -97,9 +128,9 @@ export default function LivePriceFinderApp() {
     const diagnostics = useMemo(() => findDiagnostics(model?.validation?.[modelLocality(locality)], bhk, sqft, isNew), [model, locality, bhk, sqft, isNew]);
     const changeGroup = (event) => { const next = event.target.value; setSearch(''); setGroup(next); setLocality(LOCATION_GROUPS[next][0]); };
     return <main className="live-price-app" onPointerDown={(event) => event.stopPropagation()}>
-        <section className="lp-hero"><h1>🏠 Navi Mumbai / BMC House Price Finder</h1><p>Instant locality-level estimates, price comparisons, mapping and model transparency.</p></section>
-        <nav className="lp-tabs"><button className={tab === 'finder' ? 'active' : ''} onClick={() => setTab('finder')}>🏠 Price Finder</button><button className={tab === 'insights' ? 'active' : ''} onClick={() => setTab('insights')}>🔎 Model Insights</button></nav>
-        {tab === 'finder' ? <section>
+        <section className="lp-hero"><h1>LIVE PROJECTS</h1><p>Deployed experiments built for real places, real information, and real use.</p></section>
+        <nav className="lp-tabs"><button className={tab === 'projects' ? 'active' : ''} onClick={() => setTab('projects')}>✦ Projects</button><button className={tab === 'finder' ? 'active' : ''} onClick={() => setTab('finder')}>⌂ Price Finder</button><button className={tab === 'insights' ? 'active' : ''} onClick={() => setTab('insights')}>◌ Model Insights</button></nav>
+        {tab === 'projects' ? <ProjectHub onOpenFinder={() => setTab('finder')} /> : tab === 'finder' ? <section>
             <div className="lp-grid">
                 <div className="lp-card lp-controls">
                     <div className="lp-row"><label>Property region<select value={group} onChange={changeGroup}>{Object.keys(LOCATION_GROUPS).map((name) => <option key={name}>{name}</option>)}</select></label><label>Search locality<input placeholder="Search locality…" value={search} onChange={(event) => setSearch(event.target.value)} /></label></div>

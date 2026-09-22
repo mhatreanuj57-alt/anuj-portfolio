@@ -18,6 +18,7 @@ const ROOMS = [
     { id: 'studio', label: 'Studio', x: 57, y: 55 },    // Monitors stack (right side)
     { id: 'carousel', label: 'Carousel', x: 43, y: 25 },
     { id: 'live-projects', label: 'Live Projects', x: 84, y: 87 },
+    { id: 'version-control', label: 'Version Control', x: 91, y: 60 },
 ];
 
 // Pin starting position - the dashed circle at the bottom of the tower
@@ -414,6 +415,15 @@ const NavigationUI = () => {
                                 </g>
                             </svg>
 
+                            <svg className={`map-version-control-landmark ${(hoveredRoom === 'version-control' || currentRoom === 'version-control') ? 'is-active' : ''}`} viewBox="0 0 100 100" aria-hidden="true">
+                                <path className="map-version-control-route" d="M82 60 C86 60, 88 60, 90 60" />
+                                <g transform="translate(86 54)">
+                                    <rect x="0" y="0" width="10" height="11" rx=".8" />
+                                    <circle cx="5" cy="5.4" r="2.25" />
+                                    <path d="M5 5.4 L6.4 3.9 M5 8.7 V10.1 M2.2 5.4 H.8 M7.8 5.4 H9.2" />
+                                </g>
+                            </svg>
+
                             {/* Hover Zones — 4 quadrants covering the map */}
                             <button
                                 type="button"
@@ -475,6 +485,16 @@ const NavigationUI = () => {
                                 onClick={() => handleRoomClick('live-projects')}
                                 aria-label="Teleport to Live Projects room"
                             />
+                            <button
+                                type="button"
+                                className="map-hover-zone zone-version-control"
+                                onMouseEnter={() => setHoveredRoom('version-control')}
+                                onMouseLeave={() => setHoveredRoom(null)}
+                                onFocus={() => setHoveredRoom('version-control')}
+                                onBlur={() => setHoveredRoom(null)}
+                                onClick={() => handleRoomClick('version-control')}
+                                aria-label="Teleport to Version Control room"
+                            />
 
                             {/* Permanent Map Text Labels */}
                             <div className="map-room-label about">ABOUT</div>
@@ -483,6 +503,7 @@ const NavigationUI = () => {
                             <div className="map-room-label studio">THE<br />STUDIO</div>
                             <div className="map-room-label carousel">CAROUSEL<br />LAB</div>
                             <div className="map-room-label live-projects">LIVE<br />PROJECTS</div>
+                            <div className="map-room-label version-control">VERSION<br />CONTROL</div>
 
                             {/* Pin slot markers - 4 locations */}
                             {ROOMS.map((room) => (

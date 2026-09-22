@@ -382,6 +382,13 @@
         //background: rgba(0, 160, 130, 0.25); // DEBUG green
     }
 
+    .zone-version-control {
+        right: 0;
+        top: 42%;
+        width: 15%;
+        height: 25%;
+    }
+
     .map-room-label {
         position: absolute;
         font-family: 'Cabin Sketch', cursive, sans-serif;
@@ -433,6 +440,13 @@
             left: 86%;
             font-size: 0.78rem;
             line-height: 0.95;
+        }
+
+        &.version-control {
+            top: 72%;
+            left: 91%;
+            font-size: 0.67rem;
+            line-height: 0.9;
         }
     }
 
@@ -587,6 +601,41 @@
             .map-live-projects-launch {
                 stroke: #17744f;
             }
+        }
+    }
+
+    .map-version-control-landmark {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 3;
+        pointer-events: none;
+        overflow: visible;
+
+        rect,
+        circle,
+        path {
+            fill: #fffdf8;
+            stroke: #1a1a1a;
+            stroke-width: 0.42;
+            vector-effect: non-scaling-stroke;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        path { fill: none; }
+
+        .map-version-control-route {
+            stroke-dasharray: 1.2 1.1;
+            stroke-width: 0.34;
+        }
+
+        &.is-active {
+            filter: drop-shadow(0 0 3px rgba(186, 68, 57, 0.7));
+
+            rect,
+            circle { fill: #f7e7d9; }
         }
     }
 }

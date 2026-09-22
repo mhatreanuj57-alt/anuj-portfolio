@@ -29,11 +29,29 @@ if (POSTHOG_KEY) {
 // Lazy load the heavy 3D experience
 const Experience = lazy(() => import('./components/canvas/Experience'));
 const PriceFinder = lazy(() => import('./components/canvas/rooms/LiveProjects/LivePriceFinderApp'));
+const RoleScanner = lazy(() => import('./components/ui/RoleScanner'));
 
 function LiveProjectsScreen() {
   const { currentRoom, exitRequested, isTeleporting } = useScene();
   if (currentRoom !== 'live-projects' || exitRequested || isTeleporting) return null;
   return <Suspense fallback={null}><div className="lp-screen"><PriceFinder /></div></Suspense>;
+}
+
+function RoleScannerScreen() {
+  const { currentRoom, exitRequested, isTeleporting } = useScene();
+  const [isOpen, setIsOpen] = useState(false);
+  useEffect(() => {
+    const openScanner = () => setIsOpen(true);
+    window.addEventListener('portfolio:role-scanner', openScanner);
+    return () => window.removeEventListener('portfolio:role-scanner', openScanner);
+  }, []);
+  useEffect(() => {
+    if (currentRoom === 'intelligence' && !exitRequested && !isTeleporting) return undefined;
+    const closeFrame = window.requestAnimationFrame(() => setIsOpen(false));
+    return () => window.cancelAnimationFrame(closeFrame);
+  }, [currentRoom, exitRequested, isTeleporting]);
+  if (!isOpen || currentRoom !== 'intelligence' || exitRequested || isTeleporting) return null;
+  return <Suspense fallback={null}><RoleScanner onClose={() => setIsOpen(false)} /></Suspense>;
 }
 
 import './styles/main.scss';
@@ -245,6 +263,7 @@ function AppContent() {
             <>
               <NavigationUI />
               <LiveProjectsScreen />
+              <RoleScannerScreen />
               <GlobalOverlay />
               <PaperTransition />
               <ScreenReaderOverlay />

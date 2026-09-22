@@ -35,6 +35,11 @@ const ROOM_META = {
         title: 'The Version Control — Anuj Mhatre Portfolio',
         description: 'Explore Anuj Mhatre’s interactive build record: the first build, repair points, and current production release.',
     },
+    intelligence: {
+        path: '/briefing',
+        title: 'Portfolio Briefing — Anuj Mhatre Portfolio',
+        description: 'Choose a portfolio path or scan a job description against documented project evidence.',
+    },
     studio: {
         path: '/studio',
         title: 'The Studio — Anuj Mhatre Portfolio',
@@ -60,6 +65,7 @@ const PATH_TO_ROOM = {
     '/studio': 'studio',
     '/live-projects': 'live-projects',
     '/version-control': 'version-control',
+    '/briefing': 'intelligence',
     '/contact': 'contact',
     '/carousel': 'carousel',
 };

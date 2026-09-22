@@ -4,6 +4,18 @@ import { FALLBACK_PROJECTS } from '../../config/projects';
 import { CONTENT_DATA } from '../canvas/rooms/Studio/contentData';
 import '../../styles/ScreenReaderOverlay.scss';
 
+const ROOM_NAMES = {
+    about: 'About',
+    gallery: 'Gallery',
+    contact: 'Contact',
+    studio: 'Studio',
+    carousel: 'Carousel',
+    'live-projects': 'Live Projects',
+    'version-control': 'Version Control',
+    intelligence: 'Portfolio Briefing',
+    secret: 'Archive',
+};
+
 /**
  * ScreenReaderOverlay — A7 Accessibility
  *
@@ -66,10 +78,7 @@ const ScreenReaderOverlay = () => {
                 {hasEntered && isInRoom && (
                     <>
                         <p>
-                            You are in the {currentRoom === 'about' ? 'About' :
-                                currentRoom === 'gallery' ? 'Gallery' :
-                                    currentRoom === 'contact' ? 'Contact' :
-                                        currentRoom === 'studio' ? 'Studio' : currentRoom} room.
+                            You are in the {ROOM_NAMES[currentRoom] || currentRoom} room.
                         </p>
                         <button onClick={requestExit} type="button">
                             Go back to corridor
